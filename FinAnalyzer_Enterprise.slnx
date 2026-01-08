@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="FinAnalyzer.Core/FinAnalyzer.Core.csproj" />
+  <Project Path="FinAnalyzer.Engine/FinAnalyzer.Engine.csproj" />
+  <Project Path="FinAnalyzer.UI/FinAnalyzer.UI.csproj" />
+</Solution>
