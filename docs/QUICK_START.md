@@ -1,0 +1,35 @@
+# 🚀 Quick Start Guide
+
+## Prerequisites
+
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (Windows with WSL2)
+- [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+- Visual Studio 2022
+
+## Installation & Setup
+
+1.  **Clone the Repository**
+
+    ```bash
+    git clone https://github.com/jiahao26/FinAnalyzer-Enterprise.git
+    cd FinAnalyzer-Enterprise
+    ```
+
+2.  **Start Infrastructure Services**
+    Run the following command to start Qdrant, Ollama, and the Reranker:
+
+    ```bash
+    docker-compose up -d
+    ```
+
+3.  **Initialize AI Models**
+    Download the specific quantized Llama 3 model (Requires 16GB RAM, 32GB Recommended):
+
+    ```bash
+    docker exec -it ollama ollama run llama3:8b-instruct-q8_0
+    ```
+
+    _Note: This might take a while depending on your internet connection._
+
+4.  **Run the Application**
+    Open `FinAnalyzer_Enterprise.sln` in Visual Studio and run the **FinAnalyzer.UI** project.

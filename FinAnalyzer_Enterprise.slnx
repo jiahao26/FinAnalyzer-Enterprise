@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="FinAnalyzer.Core/FinAnalyzer.Core.csproj" />
   <Project Path="FinAnalyzer.Engine/FinAnalyzer.Engine.csproj" />
+  <Project Path="FinAnalyzer.Test/FinAnalyzer.Test.csproj" Id="f3c9d796-62af-4bd2-b9ae-f32f550b4e93" />
   <Project Path="FinAnalyzer.UI/FinAnalyzer.UI.csproj" />
 </Solution>

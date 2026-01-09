@@ -35,7 +35,7 @@ packages/
 # Logs
 *.log
 
-# Docker & AI Data (CRITICAL for this project)
+# Docker & AI Data
 # Exclude local vector DB storage and model weights
 qdrant_storage/
 ollama_data/
@@ -45,3 +45,4 @@ ollama_data/
 
 # Docker Compose helper files
 docker-compose.override.yml
+
