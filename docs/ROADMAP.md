@@ -12,7 +12,6 @@ tags: [plan, project-management, dotnet, ai, rag]
 ## **Phase 1: Infrastructure & "Hello World"**
 
 **Focus:** Connectivity & Environment Setup.
-**Estimated Duration:** 1 Week
 
 - [ ] **Docker Foundation**: Create `docker-compose.yml` with Qdrant, Ollama, and TEI (Reranker) services.
 - [ ] **Solution Scaffold**: Create `FinAnalyzer_Enterprise.sln` with `Core`, `Engine`, `UI`, and `Test` projects.
@@ -24,7 +23,6 @@ tags: [plan, project-management, dotnet, ai, rag]
 ## **Phase 2: The Data Pipeline (Ingestion)**
 
 **Focus:** Converting raw PDF data into searchable vectors.
-**Estimated Duration:** 1 Week
 
 - [ ] **PDF Reader**: Implement `PdfPigLoader` to extract text from multi-column PDFs properly.
 - [ ] **Chunking Engine**: Implement `TextChunker` with sliding windows (e.g., 500 tokens, 100 overlap).
@@ -34,7 +32,6 @@ tags: [plan, project-management, dotnet, ai, rag]
 ## **Phase 3: The RAG Core (The Brain)**
 
 **Focus:** Retrieval logic and Answer Generation.
-**Estimated Duration:** 1.5 Weeks
 
 - [ ] **Retrieval Logic**: Implement `QdrantVectorService.SearchAsync` (Vector Search).
 - [ ] **Reranking Logic**: Implement `TeiRerankerService.RerankAsync` to filter top 50 -> top 5 relevant chunks.
@@ -45,7 +42,6 @@ tags: [plan, project-management, dotnet, ai, rag]
 ## **Phase 4: The UI Foundation (The Face)**
 
 **Focus:** Structure and MVVM scaffolding.
-**Estimated Duration:** 1 Week
 
 - [ ] **Shell Layout**: Design the Main Window with a Sidebar (History) and Main Content (Chat).
 - [ ] **MVVM Setup**: Initialize `CommunityToolkit.Mvvm` and Dependency Injection container in `App.xaml.cs`.
@@ -55,7 +51,6 @@ tags: [plan, project-management, dotnet, ai, rag]
 ## **Phase 5: Integration & Threading**
 
 **Focus:** Connecting the Brain to the Face without freezing.
-**Estimated Duration:** 1.5 Weeks
 
 - [ ] **File Drag & Drop**: Allow users to drop 10-K PDFs onto the UI.
 - [ ] **Async Loading**: Implement "Background Ingestion" so the UI remains responsive while parsing PDFs.
@@ -65,7 +60,6 @@ tags: [plan, project-management, dotnet, ai, rag]
 ## **Phase 6: Advanced RAG Features**
 
 **Focus:** Usability and Trust.
-**Estimated Duration:** 1 Week
 
 - [ ] **Citations**: Parse the answer to link back to source chunks.
   - _Feature_: When AI says "[1]", user clicks it -> UI opens the specific PDF page.
@@ -75,7 +69,6 @@ tags: [plan, project-management, dotnet, ai, rag]
 ## **Phase 7: Enterprise Hardening**
 
 **Focus:** Reliability and Compliance.
-**Estimated Duration:** 1 Week
 
 - [ ] **Audit Logging**: Implement `Serilog` to log every prompt and response to a text file (Compliance requirement).
 - [ ] **Global Error Handling**: Catch Docker connection failures gracefully (e.g., "AI Service Unreachable" toast notification).
