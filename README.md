@@ -1,4 +1,4 @@
-# Secure Enterprise RAG Workstation
+# Secure Enterprise RAG Workstation (WIP)
 
 A local-first .NET 8 application demonstrating secure, enterprise-grade Retrieval-Augmented Generation (RAG) for financial compliance. This application allows credit analysts to automate 10-K report compliance checks using local vector retrieval, ensuring that sensitive data never leaves the secure intranet environment.
 
