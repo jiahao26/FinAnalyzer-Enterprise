@@ -1,16 +1,29 @@
 # Secure Enterprise RAG Workstation (FinAnalyzer)
 
-![License](https://img.shields.io/badge/license-MIT-blue) ![.NET](https://img.shields.io/badge/.NET-8.0-purple) ![Architecture](https://img.shields.io/badge/Architecture-Clean-green) ![Status](https://img.shields.io/badge/Status-In%20Progress-orange)
+![License](https://img.shields.io/badge/license-MIT-blue) ![.NET](https://img.shields.io/badge/.NET-8.0-purple) ![Architecture](https://img.shields.io/badge/Architecture-Clean-green) ![Status](https://img.shields.io/badge/Status-Phase%201%20Complete-green)
 
 **FinAnalyzer Enterprise** is an on-premise RAG workstation built for financial compliance teams. It automates analysis of sensitive 10-K reports using local vector retrieval and quantized LLMs, ensuring zero data egress.
 
-## � Documentation
+## 📊 Progress Status
 
-| Document                                  | Description                                             |
-| :---------------------------------------- | :------------------------------------------------------ |
-| [**🚀 QUICK START**](docs/QUICK_START.md) | How to set up Docker, models, and run the app.          |
-| [**🌟 PHILOSOPHY**](docs/PHILOSOPHY.md)   | The strategic intent and "Secure by Design" principles. |
-| [**🛤️ ROADMAP**](docs/ROADMAP.md)         | Detailed feature timeline and phasing.                  |
+| Phase       | Description                                                  | Status          |
+| :---------- | :----------------------------------------------------------- | :-------------- |
+| **Phase 1** | **Infrastructure & "Hello World"** (Docker, Scaffold, Tests) | ✅ **Complete** |
+| **Phase 2** | **The Data Pipeline** (PDF Parsing, Chunking, Vectors)       | ⏳ In Progress  |
+| **Phase 3** | **The RAG Core** (Retrieval, Reranking, Orchestration)       | ⬜ Pending      |
+| **Phase 4** | **The UI Foundation** (WPF Shell, MVVM, Settings)            | ⬜ Pending      |
+| **Phase 5** | **Integration & Threading** (Async loading, Live Chat)       | ⬜ Pending      |
+| **Phase 6** | **Advanced Features** (Citations, Chat History)              | ⬜ Pending      |
+| **Phase 7** | **Enterprise Hardening** (Logging, Release Packaging)        | ⬜ Pending      |
+
+## 📚 Documentation
+
+| Document                                    | Description                                             |
+| :------------------------------------------ | :------------------------------------------------------ |
+| [**🚀 QUICK START**](docs/QUICK_START.md)   | How to set up Docker, models, and run the app.          |
+| [**🌟 PHILOSOPHY**](docs/PHILOSOPHY.md)     | The strategic intent and "Secure by Design" principles. |
+| [**🛤️ ROADMAP**](docs/ROADMAP.md)           | Detailed feature timeline and phasing.                  |
+| [**🏗️ ARCHITECTURE**](docs/ARCHITECTURE.md) | Structure, Clean Architecture layers, and File Map.     |
 
 ---
 

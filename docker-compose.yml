@@ -21,9 +21,13 @@ services:
     command: --model-id BAAI/bge-reranker-v2-m3
     ports:
       - "8080:80"
+    volumes:
+      - reranker_data:/data
 
 volumes:
   ollama_data:
     name: ollama_data
   qdrant_data:
     name: qdrant_data
+  reranker_data:
+    name: reranker_data

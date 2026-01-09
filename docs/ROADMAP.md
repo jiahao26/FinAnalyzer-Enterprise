@@ -13,17 +13,20 @@ tags: [plan, project-management, dotnet, ai, rag]
 
 **Focus:** Connectivity & Environment Setup.
 
-- [ ] **Docker Foundation**: Create `docker-compose.yml` with Qdrant, Ollama, and TEI (Reranker) services.
-- [ ] **Solution Scaffold**: Create `FinAnalyzer_Enterprise.sln` with `Core`, `Engine`, `UI`, and `Test` projects.
-- [ ] **Service "Ping"**: Write a Console App (temporary) to:
-  - [ ] Connect to Qdrant (Create a collection).
-  - [ ] Connect to Ollama (Generate "Hello World").
-  - [ ] Connect to Reranker (Rank simple strings).
+- [x] **Docker Foundation**: Create `docker-compose.yml` with Qdrant, Ollama, and TEI (Reranker) services.
+- [x] **Solution Scaffold**: Create `FinAnalyzer_Enterprise.slnx` with `Core`, `Engine`, `UI`, and `Test` projects.
+- [x] **Service "Ping"**: Write a Console App (temporary) to:
+  - [x] Connect to Qdrant (Create a collection).
+  - [x] Connect to Ollama (Generate "Hello World").
+  - [x] Connect to Reranker (Rank simple strings).
 
 ## **Phase 2: The Data Pipeline (Ingestion)**
 
 **Focus:** Converting raw PDF data into searchable vectors.
 
+- [ ] **Core Domain Definition**: Clean Architecture setup in `FinAnalyzer.Core`.
+  - [ ] **Models**: Create `DocumentChunk.cs` and `SearchResult.cs`.
+  - [ ] **Interfaces**: Define `IFileLoader`, `IVectorDbService`, `IRerankerService`, and `IRagService`.
 - [ ] **PDF Reader**: Implement `PdfPigLoader` to extract text from multi-column PDFs properly.
 - [ ] **Chunking Engine**: Implement `TextChunker` with sliding windows (e.g., 500 tokens, 100 overlap).
 - [ ] **Vector Upsert**: Implement `QdrantVectorService.UpsertAsync` to push chunks + metadata (page number, filename) to the DB.
