@@ -27,7 +27,7 @@ namespace FinAnalyzer.Test
             var pdfPath = "test_ingestion.pdf";
             var collectionName = "test_collection_" + Guid.NewGuid().ToString("N");
             
-            // 1. Create dummy PDF
+            // Step 1: Create dummy PDF.
             _output.WriteLine("Creating PDF...");
             var builder = new PdfDocumentBuilder();
             var page = builder.AddPage(UglyToad.PdfPig.Content.PageSize.A4);
@@ -40,39 +40,37 @@ namespace FinAnalyzer.Test
 
             try
             {
-                // 2. Load
+                // Step 2: Load PDF using PdfPigLoader.
                 _output.WriteLine("Loading PDF...");
                 var loader = new PdfPigLoader();
                 var pages = await loader.LoadAsync(pdfPath);
                 Assert.NotEmpty(pages);
                 Assert.Contains("FinAnalyzer", pages.First().Text);
 
-                // 3. Chunk
+                // Step 3: Chunk text into smaller segments.
                 _output.WriteLine("Chunking...");
                 var chunker = new TextChunker(windowSize: 500, overlap: 50); 
                 var chunks = pages.SelectMany(p => chunker.Chunk(p, pdfPath)).ToList();
                 Assert.NotEmpty(chunks);
 
-                // 3.5 Embeddings
+                // Step 4: Generate Embeddings using Ollama.
                 _output.WriteLine("Generating Embeddings...");
                 using var httpClient = new System.Net.Http.HttpClient();
                 var embeddingService = new OllamaEmbeddingService(httpClient);
                 
                 foreach (var chunk in chunks)
                 {
-                   // Generate embedding for the chunk before upserting
                    chunk.Vector = await embeddingService.GenerateEmbeddingAsync(chunk.Text);
                 }
 
-                // 4. Upsert
+                // Step 5: Upsert chunks to Qdrant.
                 _output.WriteLine("Upserting to Qdrant...");
-                var vectorService = new QdrantVectorService("localhost", 6334); 
+                var vectorService = new QdrantVectorService(embeddingService, "localhost", 6334); 
                 await vectorService.UpsertAsync(collectionName, chunks);
 
-                // 5. Verify (Count via separate client instance to be sure)
                 var client = new QdrantClient("localhost", 6334);
                 
-                // Allow a moment for propagation
+                // Delay to allow indexing propagation.
                 await Task.Delay(2000);
 
                 var collectionInfo = await client.GetCollectionInfoAsync(collectionName);
@@ -81,7 +79,6 @@ namespace FinAnalyzer.Test
             }
             finally
             {
-                // Cleanup
                 if (File.Exists(pdfPath)) File.Delete(pdfPath);
                 try {
                     var client = new QdrantClient("localhost", 6334);

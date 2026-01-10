@@ -11,6 +11,13 @@ graph TD
     UI --> Engine
     Test[FinAnalyzer.Test] --> Core
     Test --> Engine
+
+    subgraph Engine Components
+        SK[SemanticKernelService] --> Q[QdrantVectorService]
+        SK --> R[TeiRerankerService]
+        Q --> E[OllamaEmbeddingService]
+        SK --> LLM[Semantic Kernel]
+    end
 ```
 
 ---

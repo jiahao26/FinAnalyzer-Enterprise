@@ -11,6 +11,7 @@ namespace FinAnalyzer.Engine.Services
     {
         public Task<IEnumerable<PageContent>> LoadAsync(string filePath)
         {
+            // Offload IO-bound work to background thread.
             return Task.Run(() =>
             {
                 var pages = new List<PageContent>();
@@ -22,6 +23,7 @@ namespace FinAnalyzer.Engine.Services
                         var text = page.Text;
                         if (!string.IsNullOrWhiteSpace(text))
                         {
+                            // Map PDF page text to PageContent model.
                             pages.Add(new PageContent
                             {
                                 Text = text,

@@ -38,11 +38,12 @@ tags: [plan, project-management, dotnet, ai, rag]
 
 **Focus:** Retrieval logic and Answer Generation.
 
-- [ ] **Retrieval Logic**: Implement `QdrantVectorService.SearchAsync` (Vector Search).
-- [ ] **Reranking Logic**: Implement `TeiRerankerService.RerankAsync` to filter top 50 -> top 5 relevant chunks.
-- [ ] **Orchestration**: Implement `SemanticKernelService` to bind it all together:
+- [x] **Retrieval Logic**: Implement `QdrantVectorService.SearchAsync` (Vector Search).
+- [x] **Reranking Logic**: Implement `TeiRerankerService.RerankAsync` to filter top 50 -> top 5 relevant chunks.
+- [x] **Warm-up Strategy**: Implement `IModelLifecycle` to pre-load models (Ollama, TEI) on startup.
+- [x] **Orchestration**: Implement `SemanticKernelService` to bind it all together:
   - `Input -> Vector Search -> Rerank -> Prompt Engineering (Context Stuffing) -> LLM -> Answer`.
-- [ ] **Orchestration Tests**: Verify the pipeline flows correctly using Mocks.
+- [x] **Orchestration Tests**: Verify the pipeline flows correctly using Mocks.
 
 ## **Phase 4: The UI Foundation (The Face)**
 

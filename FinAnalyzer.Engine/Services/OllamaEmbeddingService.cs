@@ -7,7 +7,10 @@ using FinAnalyzer.Core.Interfaces;
 
 namespace FinAnalyzer.Engine.Services
 {
-    public class OllamaEmbeddingService : IEmbeddingService
+    /// <summary>
+    /// Provides embedding generation using a local Ollama instance.
+    /// </summary>
+    public class OllamaEmbeddingService : IEmbeddingService, IModelLifecycle
     {
         private readonly HttpClient _httpClient;
         private readonly string _modelName;
@@ -20,6 +23,11 @@ namespace FinAnalyzer.Engine.Services
             _modelName = modelName;
         }
 
+        /// <summary>
+        /// Generates a vector embedding for the provided text.
+        /// </summary>
+        /// <param name="text">Input text to embed.</param>
+        /// <returns>A read-only memory block containing the floating-point vector.</returns>
         public async Task<ReadOnlyMemory<float>> GenerateEmbeddingAsync(string text)
         {
             var payload = new
@@ -45,7 +53,23 @@ namespace FinAnalyzer.Engine.Services
             return new ReadOnlyMemory<float>(result.embedding);
         }
 
-        // Internal class for deserialization
+        /// <summary>
+        /// Sends a dummy request to ensure the model is loaded into memory (Warm-Up).
+        /// </summary>
+        public async Task WarmUpAsync()
+        {
+            // Tip: Send dummy request ("warmup") to force Ollama to load model into RAM.
+            // Prevents first user query from being slow.
+            try 
+            {
+                await GenerateEmbeddingAsync("warmup");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[Warning] Ollama WarmUp failed: {ex.Message}");
+            }
+        }
+
         private class OllamaEmbeddingResponse
         {
             public float[]? embedding { get; set; }

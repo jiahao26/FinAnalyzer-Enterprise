@@ -29,8 +29,8 @@ namespace FinAnalyzer.Engine.Services
                 var chunkWords = words.Skip(i).Take(_windowSize);
                 var chunkText = string.Join(" ", chunkWords);
 
-                // Ensure unique ID generation strategy (e.g., hash of text or GUID)
-                // For now using GUID for simplicity
+                // Validation: Ensure unique ID generation strategy.
+                // Using GUID for simplicity.
                 yield return new DocumentChunk
                 {
                     Id = Guid.NewGuid().ToString(),
@@ -44,7 +44,7 @@ namespace FinAnalyzer.Engine.Services
                     }
                 };
 
-                // Prevent infinite loop if overlap >= windowSize (though construct should guard, loop logic handles if we increment > 0)
+                // Guard: Prevent infinite loop if overlap >= windowSize.
                 // Logic check: i increments by (window - overlap). If window <= overlap, this stalls.
                 if (_windowSize <= _overlap) throw new InvalidOperationException("Overlap must be smaller than Window Size.");
             }

@@ -1,8 +1,7 @@
 namespace FinAnalyzer.Core.Models
 {
-    public class SearchResult
+    public class SearchResult : DocumentChunk
     {
-        public DocumentChunk Chunk { get; set; } = new DocumentChunk();
         public double Score { get; set; }
     }
 }

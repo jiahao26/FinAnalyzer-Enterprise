@@ -32,7 +32,7 @@ namespace FinAnalyzer.Test
         public async Task Ollama_ShouldBeReachable()
         {
             // Arrange
-            // /api/tags is a lightweight endpoint to check if Ollama is up
+            // Use /api/tags to check health.
             var url = "http://localhost:11434/api/tags";
 
             // Act
@@ -49,14 +49,14 @@ namespace FinAnalyzer.Test
             var url = "http://localhost:8080/rerank";
             var payload = new { query = "test", texts = new[] { "test" } };
             var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
-
-            // Act & Assert: Retry logic
-            // Reranker (TEI) takes time to download models/initialize, so we poll for readiness.
+ 
+            // Act & Assert: Retry logic.
+            // Reranker takes time to warm up. Poll until ready.
             var isConnected = await WaitForServiceAsync(async () => 
             {
                 try
                 {
-                    // Re-create content for each attempt as it might be disposed
+                    // Re-create content for each attempt as it might be disposed.
                     var currentContent = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
                     var response = await _client.PostAsync(url, currentContent);
                     return response.IsSuccessStatusCode;
@@ -65,7 +65,7 @@ namespace FinAnalyzer.Test
                 {
                     return false;
                 }
-            }, TimeSpan.FromSeconds(300)); // Wait up to 5 minutes for slow model loading
+            }, TimeSpan.FromSeconds(300)); // Wait up to 5 minutes for slow model loading.
 
             Assert.True(isConnected, $"Reranker at {url} did not become reachable within the timeout period.");
         }
@@ -80,7 +80,7 @@ namespace FinAnalyzer.Test
                 {
                     return true;
                 }
-                await Task.Delay(2000); // Wait 2s before retry
+                await Task.Delay(2000); // Wait 2s before retry.
             }
             return false;
         }

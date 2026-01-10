@@ -10,7 +10,7 @@
 | :---------- | :----------------------------------------------------------- | :-------------- |
 | **Phase 1** | **Infrastructure & "Hello World"** (Docker, Scaffold, Tests) | ✅ **Complete** |
 | **Phase 2** | **The Data Pipeline** (PDF Parsing, Chunking, Vectors)       | ✅ **Complete** |
-| **Phase 3** | **The RAG Core** (Retrieval, Reranking, Orchestration)       | ⏳ In Progress  |
+| **Phase 3** | **The RAG Core** (Retrieval, Reranking, Orchestration)       | ✅ **Complete** |
 | **Phase 4** | **The UI Foundation** (WPF Shell, MVVM, Settings)            | ⬜ Pending      |
 | **Phase 5** | **Integration & Threading** (Async loading, Live Chat)       | ⬜ Pending      |
 | **Phase 6** | **Advanced Features** (Citations, Chat History)              | ⬜ Pending      |
