@@ -15,22 +15,24 @@ tags: [plan, project-management, dotnet, ai, rag]
 
 - [x] **Docker Foundation**: Create `docker-compose.yml` with Qdrant, Ollama, and TEI (Reranker) services.
 - [x] **Solution Scaffold**: Create `FinAnalyzer_Enterprise.slnx` with `Core`, `Engine`, `UI`, and `Test` projects.
-- [x] **Service "Ping"**: Write a Console App (temporary) to:
-  - [x] Connect to Qdrant (Create a collection).
-  - [x] Connect to Ollama (Generate "Hello World").
-  - [x] Connect to Reranker (Rank simple strings).
+- [x] **Service Verification**: Implement `InfrastructureTests` to verify:
+  - [x] Connect to Qdrant.
+  - [x] Connect to Ollama.
+  - [x] Connect to Reranker.
 
 ## **Phase 2: The Data Pipeline (Ingestion)**
 
 **Focus:** Converting raw PDF data into searchable vectors.
 
-- [ ] **Core Domain Definition**: Clean Architecture setup in `FinAnalyzer.Core`.
-  - [ ] **Models**: Create `DocumentChunk.cs` and `SearchResult.cs`.
-  - [ ] **Interfaces**: Define `IFileLoader`, `IVectorDbService`, `IRerankerService`, and `IRagService`.
-- [ ] **PDF Reader**: Implement `PdfPigLoader` to extract text from multi-column PDFs properly.
-- [ ] **Chunking Engine**: Implement `TextChunker` with sliding windows (e.g., 500 tokens, 100 overlap).
-- [ ] **Vector Upsert**: Implement `QdrantVectorService.UpsertAsync` to push chunks + metadata (page number, filename) to the DB.
-- [ ] **Unit Tests**: Verify chunking boundaries and PDF reading order.
+- [x] **Core Domain Definition**: Clean Architecture setup in `FinAnalyzer.Core`.
+  - [x] **Models**: Create `DocumentChunk.cs` and `SearchResult.cs`.
+  - [x] **Interfaces**: Define `IFileLoader`, `IVectorDbService`, `IRerankerService`, and `IRagService`.
+  - [x] **Embedding Interface**: Define `IEmbeddingService` for vector generation.
+- [x] **PDF Reader**: Implement `PdfPigLoader` to extract text from multi-column PDFs properly.
+- [x] **Chunking Engine**: Implement `TextChunker` with sliding windows (e.g., 500 tokens, 100 overlap).
+- [x] **Embedding Generation**: Implement `OllamaEmbeddingService` to convert text chunks to vectors using `nomic-embed-text-v1.5`.
+- [x] **Vector Upsert**: Implement `QdrantVectorService.UpsertAsync` to push chunks + metadata (page number, filename) to the DB.
+- [x] **Integration Tests**: Verify the full ingestion pipeline (PDF -> Chunk -> Qdrant) using `IngestionTests.cs`.
 
 ## **Phase 3: The RAG Core (The Brain)**
 

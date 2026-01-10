@@ -50,11 +50,39 @@ namespace FinAnalyzer.Test
             var payload = new { query = "test", texts = new[] { "test" } };
             var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
 
-            // Act
-            var response = await _client.PostAsync(url, content);
+            // Act & Assert: Retry logic
+            // Reranker (TEI) takes time to download models/initialize, so we poll for readiness.
+            var isConnected = await WaitForServiceAsync(async () => 
+            {
+                try
+                {
+                    // Re-create content for each attempt as it might be disposed
+                    var currentContent = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
+                    var response = await _client.PostAsync(url, currentContent);
+                    return response.IsSuccessStatusCode;
+                }
+                catch
+                {
+                    return false;
+                }
+            }, TimeSpan.FromSeconds(300)); // Wait up to 5 minutes for slow model loading
 
-            // Assert
-            Assert.True(response.IsSuccessStatusCode, $"Reranker at {url} is not reachable. Status: {response.StatusCode}");
+            Assert.True(isConnected, $"Reranker at {url} did not become reachable within the timeout period.");
+        }
+
+        // Helper for polling services
+        private async Task<bool> WaitForServiceAsync(Func<Task<bool>> healthCheck, TimeSpan timeout)
+        {
+            var startTime = DateTime.UtcNow;
+            while (DateTime.UtcNow - startTime < timeout)
+            {
+                if (await healthCheck())
+                {
+                    return true;
+                }
+                await Task.Delay(2000); // Wait 2s before retry
+            }
+            return false;
         }
     }
 }

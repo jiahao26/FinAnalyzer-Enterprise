@@ -1,6 +1,19 @@
 <Project>
   <PropertyGroup>
-    <UseArtifactsOutput>true</UseArtifactsOutput>
-    <ArtifactsPath>$(MSBuildThisFileDirectory)build</ArtifactsPath>
+    <UseArtifactsOutput>false</UseArtifactsOutput>
+    <!-- Disable Reference Assembly generation to avoid file locks on obj/.../refint/ -->
+    <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
   </PropertyGroup>
+
+  <!-- Output COPY strategy: Build locally, then copy to /build -->
+  <Target Name="PromoteToCentralBuild" AfterTargets="Build">
+    <ItemGroup>
+      <OutputFiles Include="$(TargetDir)**\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(OutputFiles)"
+          DestinationFolder="$(MSBuildThisFileDirectory)build\$(Configuration)\%(RecursiveDir)"
+          SkipUnchangedFiles="true"
+          Retries="10"
+          RetryDelayMilliseconds="500" />
+  </Target>
 </Project>

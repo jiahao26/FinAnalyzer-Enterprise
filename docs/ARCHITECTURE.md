@@ -27,7 +27,7 @@ graph TD
 
 **Role:** The "Brain" and "Hands". Implements the interfaces defined in Core using specific libraries.
 
-- **Dependencies:** `Microsoft.SemanticKernel`, `Qdrant.Client`, `PdfPig` (Planned).
+- **Dependencies:** `Microsoft.SemanticKernel`, `Qdrant.Client`, `PdfPig` (Planned), `OllamaSharp` or `Microsoft.SemanticKernel.Connectors.Ollama` (Planned).
 
 ### 🔵 FinAnalyzer.UI (Presentation Layer)
 
@@ -49,27 +49,40 @@ This map shows the **Solution Structure**. Items marked with `*` are **Planned f
 
 ```text
 FinAnalyzer_Enterprise/
+├── directory.build.props           # [ Build ] Common MSBuild settings
 ├── docker-compose.yml              # [ Infra ] Database & AI Services
 ├── FinAnalyzer_Enterprise.slnx     # [ Sln ] VS 2026 Solution File
 │
-├── FinAnalyzer.Core/
+├── FinAnalyzer.Core/               # [ Domain ] Pure business logic & contracts
 │   ├── FinAnalyzer.Core.csproj
-│   ├── Interfaces/                 # [ Contract ] empty placeholder
-│   └── Models/                     # [ Data ] * (Planned)
+│   ├── Interfaces/
+│   │   ├── IEmbeddingService.cs
+│   │   ├── IFileLoader.cs
+│   │   ├── IRagService.cs
+│   │   ├── IRerankerService.cs
+│   │   └── IVectorDbService.cs
+│   └── Models/
+│       ├── DocumentChunk.cs
+│       ├── PageContent.cs
+│       └── SearchResult.cs
 │
-├── FinAnalyzer.Engine/
+├── FinAnalyzer.Engine/             # [ App Layer ] Implementation of Core interfaces
 │   ├── FinAnalyzer.Engine.csproj
-│   └── Services/                   # [ Logic ] * (Planned)
+│   ├── Services/
+│   │   ├── OllamaEmbeddingService.cs
+│   │   ├── PdfPigLoader.cs
+│   │   ├── QdrantVectorService.cs
+│   │   └── TextChunker.cs
 │
-├── FinAnalyzer.UI/
+├── FinAnalyzer.UI/                 # [ Presentation ] WPF Application
 │   ├── FinAnalyzer.UI.csproj
 │   ├── MainWindow.xaml             # [ View ] Main Shell
-│   ├── ViewModels/                 # [ VM ] * (Planned)
-│   └── appsettings.json            # [ Config ] * (Planned)
+│   └── App.xaml
 │
-└── FinAnalyzer.Test/
+└── FinAnalyzer.Test/               # [ Tests ] Unit & Integration Tests
     ├── FinAnalyzer.Test.csproj
-    └── InfrastructureTests.cs      # [ Test ] Connectivity Verification
+    ├── InfrastructureTests.cs      # [ Verify ] Docker Service Connectivity
+    └── IngestionTests.cs           # [ Verify ] Full RAG Pipeline
 ```
 
 ## 4. Key Design Decisions

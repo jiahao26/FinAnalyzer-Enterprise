@@ -1,6 +1,6 @@
 # Secure Enterprise RAG Workstation (FinAnalyzer)
 
-![License](https://img.shields.io/badge/license-MIT-blue) ![.NET](https://img.shields.io/badge/.NET-8.0-purple) ![Architecture](https://img.shields.io/badge/Architecture-Clean-green) ![Status](https://img.shields.io/badge/Status-Phase%201%20Complete-green)
+![License](https://img.shields.io/badge/license-MIT-blue) ![.NET](https://img.shields.io/badge/.NET-8.0-purple) ![Architecture](https://img.shields.io/badge/Architecture-Clean-green) ![Status](https://img.shields.io/badge/Status-Phase%202%20Complete-green)
 
 **FinAnalyzer Enterprise** is an on-premise RAG workstation built for financial compliance teams. It automates analysis of sensitive 10-K reports using local vector retrieval and quantized LLMs, ensuring zero data egress.
 
@@ -9,8 +9,8 @@
 | Phase       | Description                                                  | Status          |
 | :---------- | :----------------------------------------------------------- | :-------------- |
 | **Phase 1** | **Infrastructure & "Hello World"** (Docker, Scaffold, Tests) | ✅ **Complete** |
-| **Phase 2** | **The Data Pipeline** (PDF Parsing, Chunking, Vectors)       | ⏳ In Progress  |
-| **Phase 3** | **The RAG Core** (Retrieval, Reranking, Orchestration)       | ⬜ Pending      |
+| **Phase 2** | **The Data Pipeline** (PDF Parsing, Chunking, Vectors)       | ✅ **Complete** |
+| **Phase 3** | **The RAG Core** (Retrieval, Reranking, Orchestration)       | ⏳ In Progress  |
 | **Phase 4** | **The UI Foundation** (WPF Shell, MVVM, Settings)            | ⬜ Pending      |
 | **Phase 5** | **Integration & Threading** (Async loading, Live Chat)       | ⬜ Pending      |
 | **Phase 6** | **Advanced Features** (Citations, Chat History)              | ⬜ Pending      |

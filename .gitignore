@@ -46,3 +46,4 @@ ollama_data/
 # Docker Compose helper files
 docker-compose.override.yml
 
+build/
