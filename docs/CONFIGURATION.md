@@ -14,9 +14,13 @@ The configuration file is divided into sections for each major service.
     "HttpPort": 6333,
     "VectorSize": 768
   },
-  "Ollama": {
-    "BaseUrl": "http://localhost:11434",
-    "ModelName": "nomic-embed-text"
+  "AIServices": {
+    "BackendType": "Ollama",
+    "ChatEndpoint": "http://localhost:11434",
+    "ChatModelId": "llama3",
+    "EmbeddingEndpoint": "http://localhost:11434",
+    "EmbeddingModelId": "nomic-embed-text",
+    "ApiKey": ""
   },
   "Tei": {
     "BaseUrl": "http://localhost:8080"
@@ -35,12 +39,16 @@ The configuration file is divided into sections for each major service.
 | `HttpPort`   | `6333`      | **REST API Port**. Used for health checks, debugging, and collection info. |
 | `VectorSize` | `768`       | Dimensionality of embeddings. MUST match the model used (e.g., Nomic=768). |
 
-### 🦙 Ollama (LLM & Embeddings)
+### 🤖 AI Services (LLM & Embeddings)
 
-| Key         | Default                  | Description                                              |
-| :---------- | :----------------------- | :------------------------------------------------------- |
-| `BaseUrl`   | `http://localhost:11434` | Endpoint for the local Ollama instance.                  |
-| `ModelName` | `nomic-embed-text`       | The specific model tag to use for generating embeddings. |
+| Key                 | Default                  | Description                                                                                        |
+| :------------------ | :----------------------- | :------------------------------------------------------------------------------------------------- |
+| `BackendType`       | `Ollama`                 | Only `Ollama` and `OpenAI_Compatible` are supported.                                               |
+| `ChatEndpoint`      | `http://localhost:11434` | The API endpoint for chat completions.                                                             |
+| `ChatModelId`       | `llama3`                 | The model ID for chat (e.g., `llama3`, `gpt-4o`).                                                  |
+| `EmbeddingEndpoint` | `http://localhost:11434` | The API endpoint for embeddings (can be different from Chat).                                      |
+| `EmbeddingModelId`  | `nomic-embed-text`       | The specific model tag to use for generating embeddings.                                           |
+| `ApiKey`            | `null`                   | Optional API Key if using a secured OpenAI-compatible endpoint (e.g., LM Studio, vLLM, or OpenAI). |
 
 ### 🔁 TEI (Reranker)
 

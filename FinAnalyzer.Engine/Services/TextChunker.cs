@@ -10,10 +10,10 @@ namespace FinAnalyzer.Engine.Services
 {
     public class TextChunker
     {
-        private readonly int _windowSize; // Target tokens per chunk
-        private readonly int _overlap;    // Overlap tokens (not fully utilized in this recursive splitter, but kept for API)
+        private readonly int _windowSize; // Set target tokens per chunk
+        private readonly int _overlap;    // Define overlap tokens (kept for API consistency)
         private readonly Tokenizer _tokenizer;
-        // Recursive separators: Paragraphs -> Lines -> Sentences -> Words
+        // Define recursive separators: Paragraphs -> Lines -> Sentences -> Words
         private readonly string[] _separators = new[] { "\r\n\r\n", "\n\n", "\r\n", "\n", " " };
 
         public TextChunker(int windowSize = 500, int overlap = 100)
@@ -21,16 +21,16 @@ namespace FinAnalyzer.Engine.Services
             _windowSize = windowSize;
             _overlap = overlap;
             
-            // Initialize Tokenizer (Approximating Llama-3/GPT-4 for token counting)
+            // Initialize Tokenizer to approximate Llama-3/GPT-4 token counting
             try 
             {
-                // Uses Microsoft.ML.Tokenizers (approx v0.22+)
-                // TiktokenTokenizer is efficient and accurate for GPT-4/Llama-3 class models
+                // Use Microsoft.ML.Tokenizers library
+                // Use TiktokenTokenizer for efficient and accurate token counting
                 _tokenizer = TiktokenTokenizer.CreateForModel("gpt-4");
             }
             catch
             {
-                // Fallback if model loading fails
+                // Fallback to null if model loading fails
                 _tokenizer = null;
             }
         }
@@ -50,7 +50,7 @@ namespace FinAnalyzer.Engine.Services
             {
                 if (string.IsNullOrWhiteSpace(chunkText)) continue;
                 
-                // Deterministic ID generation for idempotency
+                // Generate deterministic ID for idempotency
                 var chunkId = GenerateId(sourceFileName, page.PageNumber, chunkIndex);
                 chunkIndex++;
 
@@ -71,7 +71,7 @@ namespace FinAnalyzer.Engine.Services
 
         private string GenerateId(string fileName, int page, int chunkIndex)
         {
-            // Create a unique, deterministic hash for this chunk position
+            // Create unique, deterministic hash for chunk position
             var input = $"{fileName}_{page}_{chunkIndex}";
             using var sha256 = SHA256.Create();
             var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(input));
@@ -81,7 +81,7 @@ namespace FinAnalyzer.Engine.Services
         private int CountTokens(string text)
         {
             if (string.IsNullOrEmpty(text)) return 0;
-            // Use tokenizer if available, else approximate 4 chars = 1 token
+            // Use tokenizer if available; otherwise approximate 4 chars per token
             return _tokenizer?.CountTokens(text) ?? (text.Length / 4);
         }
 
@@ -94,7 +94,7 @@ namespace FinAnalyzer.Engine.Services
                 return;
             }
 
-            // Find best separator
+            // Find optimal separator
             string separator = null;
             int separatorIndex = -1;
             
@@ -117,7 +117,7 @@ namespace FinAnalyzer.Engine.Services
                 {
                     string segment = split; 
                     
-                    // Construct potential next piece
+                    // Construct potential next segment
                     string nextText = currentDoc.Length == 0 ? segment : currentDoc.ToString() + separator + segment;
                     
                     if (CountTokens(nextText) > _windowSize)
@@ -128,7 +128,7 @@ namespace FinAnalyzer.Engine.Services
                             currentDoc.Clear();
                         }
                         
-                        // If segment alone is too big, recurse
+                        // Recurse if segment exceeds window size
                         if (CountTokens(segment) > _windowSize)
                         {
                             if (separatorIndex < separators.Length - 1)
@@ -138,14 +138,14 @@ namespace FinAnalyzer.Engine.Services
                             }
                             else
                             {
-                                // No more separators, force split?
-                                // Let's just add it for now or implement hard split
+                                // Force split when no separators remain
+                                // Implement hard split strategy
                                 int charLimit = _windowSize * 4;
                                 if (segment.Length > charLimit) 
                                 {
-                                     // Extremely basic hard split
+                                     // Apply basic hard split
                                      chunks.Add(segment.Substring(0, charLimit)); 
-                                     // (Truncating for safety in this edge case, or loop)
+                                     // Truncate for safety in edge cases
                                 }
                                 else
                                 {
@@ -172,7 +172,7 @@ namespace FinAnalyzer.Engine.Services
             }
             else
             {
-                // Hard character split fallback
+                // Execute hard character split fallback
                 int charLimit = _windowSize * 4;
                 for (int i = 0; i < text.Length; i += charLimit)
                 {

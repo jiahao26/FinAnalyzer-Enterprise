@@ -18,7 +18,7 @@ graph TD
         Config --> R
         SK[SemanticKernelService] --> Q[QdrantVectorService]
         SK --> R[TeiRerankerService]
-        Q --> E[OllamaEmbeddingService]
+        Q --> E[GenericEmbeddingService]
         SK --> LLM[Semantic Kernel]
     end
 ```
@@ -82,7 +82,7 @@ FinAnalyzer_Enterprise/
 │   ├── Configuration/
 │   │   └── ConfigurationLoader.cs  # [ Config ] Standardized Config Loading
 │   ├── Services/
-│   │   ├── OllamaEmbeddingService.cs
+│   │   ├── GenericEmbeddingService.cs
 │   │   ├── PdfPigLoader.cs
 │   │   ├── QdrantVectorService.cs
 │   │   └── TextChunker.cs

@@ -10,24 +10,24 @@ using FinAnalyzer.Core.Configuration;
 namespace FinAnalyzer.Engine.Services
 {
     /// <summary>
-    /// Provides embedding generation using a local Ollama instance.
+    /// Provide embedding generation using configurable backend (defaulting to Ollama).
     /// </summary>
-    public class OllamaEmbeddingService : IEmbeddingService, IModelLifecycle
+    public class GenericEmbeddingService : IEmbeddingService, IModelLifecycle
     {
         private readonly HttpClient _httpClient;
         private readonly string _modelName;
         private readonly string _baseUrl;
 
-        public OllamaEmbeddingService(HttpClient httpClient, IOptions<OllamaSettings> options)
+        public GenericEmbeddingService(HttpClient httpClient, IOptions<AISettings> options)
         {
             _httpClient = httpClient;
             var settings = options.Value;
-            _baseUrl = settings.BaseUrl;
-            _modelName = settings.ModelName;
+            _baseUrl = settings.EmbeddingEndpoint;
+            _modelName = settings.EmbeddingModelId;
         }
 
         /// <summary>
-        /// Generates a vector embedding for the provided text.
+        /// Generate vector embedding for input text.
         /// </summary>
         /// <param name="text">Input text to embed.</param>
         /// <returns>A read-only memory block containing the floating-point vector.</returns>
@@ -42,6 +42,9 @@ namespace FinAnalyzer.Engine.Services
             var jsonPayload = JsonSerializer.Serialize(payload);
             var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
+            // Assume Ollama API structure for embeddings. 
+            // Future update: adjust logic if OpenAI compatible endpoint is needed.
+            // Requirement: "EmbeddingEndpoint: Base URL for embeddings (usually Ollama)."
             var response = await _httpClient.PostAsync($"{_baseUrl}/api/embeddings", content);
             response.EnsureSuccessStatusCode();
 
@@ -57,19 +60,19 @@ namespace FinAnalyzer.Engine.Services
         }
 
         /// <summary>
-        /// Sends a dummy request to ensure the model is loaded into memory (Warm-Up).
+        /// Send dummy request to ensure model is loaded into memory (Warm-Up).
         /// </summary>
         public async Task WarmUpAsync()
         {
-            // Tip: Send dummy request ("warmup") to force Ollama to load model into RAM.
-            // Prevents first user query from being slow.
+            // Send dummy request ("warmup") to force Ollama to load model into RAM.
+            // Prevent latency on first user query.
             try 
             {
                 await GenerateEmbeddingAsync("warmup");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[Warning] Ollama WarmUp failed: {ex.Message}");
+                Console.WriteLine($"[Warning] Embedding Service WarmUp failed: {ex.Message}");
             }
         }
 
