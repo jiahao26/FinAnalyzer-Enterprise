@@ -68,6 +68,7 @@ FinAnalyzer_Enterprise/
 │   ├── Interfaces/
 │   │   ├── IEmbeddingService.cs
 │   │   ├── IFileLoader.cs
+│   │   ├── IModelLifecycle.cs
 │   │   ├── IRagService.cs
 │   │   ├── IRerankerService.cs
 │   │   └── IVectorDbService.cs
