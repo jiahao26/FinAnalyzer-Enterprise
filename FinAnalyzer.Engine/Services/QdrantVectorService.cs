@@ -11,28 +11,28 @@ using Qdrant.Client.Grpc;
 namespace FinAnalyzer.Engine.Services
 {
     /// <summary>
-    /// Service for interacting with the Qdrant vector database.
-    /// Handles storage and retrieval of document chunks and their embeddings.
+    /// Service for interacting with Qdrant vector database.
+    /// Handle storage and retrieval of document chunks and embeddings.
     /// </summary>
     public class QdrantVectorService : IVectorDbService
     {
         private readonly QdrantClient _client;
         
-        // Injected via Constructor
+        // Parameters injected via Constructor
         private readonly int _vectorSize;
         private readonly IEmbeddingService _embeddingService;
 
-        public QdrantVectorService(IEmbeddingService embeddingService, Microsoft.Extensions.Options.IOptions<QdrantSettings> options)
+        public QdrantVectorService(IEmbeddingService embeddingService, Microsoft.Extensions.Options.IOptions<QdrantSettings> options, QdrantClient client = null)
         {
             var settings = options.Value;
-            _client = new QdrantClient(settings.Host, settings.Port);
+            _client = client ?? new QdrantClient(settings.Host, settings.Port);
             _vectorSize = settings.VectorSize;
             _embeddingService = embeddingService;
         }
 
         /// <summary>
-        /// UPSERTs a batch of document chunks into a specific collection.
-        /// Creates the collection if it does not exist.
+        /// Upsert batch of document chunks into specific collection.
+        /// Create collection if non-existent.
         /// </summary>
         /// <param name="collectionName">Target Qdrant collection.</param>
         /// <param name="chunks">List of chunks to insert.</param>
@@ -47,7 +47,7 @@ namespace FinAnalyzer.Engine.Services
             var points = new List<PointStruct>();
             foreach (var chunk in chunks)
             {
-                // Validation: Chunks must have embeddings before saving.
+                // Validate chunks have embeddings before saving.
                 if (chunk.Vector.IsEmpty)
                 {
                     throw new ArgumentException($"Chunk {chunk.Id} has no embedding vector.");
@@ -69,8 +69,8 @@ namespace FinAnalyzer.Engine.Services
                     }
                 };
                 
-                // Tip: Storing metadata in payload allows filtering search results later
-                // (e.g. "only show results from 2024").
+                // Store metadata in payload to allow filtering search results later
+                // (e.g., "only show results from 2024").
                 foreach(var kvp in chunk.Metadata)
                 {
                    point.Payload[kvp.Key] = new Qdrant.Client.Grpc.Value { StringValue = kvp.Value.ToString() };
@@ -86,7 +86,7 @@ namespace FinAnalyzer.Engine.Services
         }
 
         /// <summary>
-        /// Performs a semantic search using cosine similarity.
+        /// Perform semantic search using cosine similarity.
         /// </summary>
         /// <param name="collectionName">Collection to search.</param>
         /// <param name="query">User's natural language query.</param>

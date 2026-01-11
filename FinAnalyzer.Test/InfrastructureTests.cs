@@ -36,9 +36,9 @@ namespace FinAnalyzer.Test
         [Fact]
         public async Task Ollama_ShouldBeReachable()
         {
-            // Arrange (Use /api/tags to check health)
-            var settings = _config.GetSection("Ollama").Get<OllamaSettings>();
-            var url = $"{settings.BaseUrl}/api/tags";
+            // Arrange: Check health via /api/tags.
+            var settings = _config.GetSection("AIServices").Get<AISettings>();
+            var url = $"{settings.EmbeddingEndpoint}/api/tags";
 
             // Act
             var response = await _client.GetAsync(url);
@@ -57,12 +57,12 @@ namespace FinAnalyzer.Test
             var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
  
             // Act & Assert: Retry logic.
-            // Reranker takes time to warm up. Poll until ready.
+            // Poll until ready (Reranker warmup).
             var isConnected = await WaitForServiceAsync(async () => 
             {
                 try
                 {
-                    // Re-create content for each attempt as it might be disposed.
+                    // Re-create content for each attempt to avoid disposal issues.
                     var currentContent = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
                     var response = await _client.PostAsync(url, currentContent);
                     return response.IsSuccessStatusCode;
@@ -71,12 +71,12 @@ namespace FinAnalyzer.Test
                 {
                     return false;
                 }
-            }, TimeSpan.FromSeconds(300)); // Wait up to 5 minutes for slow model loading.
+            }, TimeSpan.FromSeconds(300)); // Wait up to 5 minutes.
 
             Assert.True(isConnected, $"Reranker at {url} did not become reachable within the timeout period.");
         }
 
-        // Helper for polling services
+        // Helper for polling services.
         private async Task<bool> WaitForServiceAsync(Func<Task<bool>> healthCheck, TimeSpan timeout)
         {
             var startTime = DateTime.UtcNow;

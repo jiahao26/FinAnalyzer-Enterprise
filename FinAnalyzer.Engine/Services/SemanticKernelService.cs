@@ -8,7 +8,7 @@ using Microsoft.SemanticKernel;
 namespace FinAnalyzer.Engine.Services
 {
     /// <summary>
-    /// Orchestrates the RAG flow: Retrieval -> Reranking -> Generation.
+    /// Orchestrate RAG flow: Retrieval -> Reranking -> Generation.
     /// </summary>
     public class SemanticKernelService : IRagService
     {
@@ -31,27 +31,27 @@ namespace FinAnalyzer.Engine.Services
         }
 
         /// <summary>
-        /// Executes a full RAG query pipeline.
+        /// Execute full RAG query pipeline.
         /// </summary>
         /// <param name="question">User's question.</param>
         /// <returns>The LLM's generated answer based on retrieved context (streamed).</returns>
         public async IAsyncEnumerable<string> QueryAsync(string question)
         {
-            // Step 1: Retrieval (Hybrid/Vector Search)
-            // Fetch more candidates (top 25) to give reranker enough data to work with.
+            // Step 1: Retrieval (Hybrid/Vector Search). Execute search.
+            // Fetch top 25 candidates to provide sufficient data for reranker.
             var searchResults = await _vectorDb.SearchAsync(CollectionName, question, limit: 25);
 
-            // Step 2: Reranking (Precision Filtering)
-            // Reranker sorts candidates by semantic relevance. Keep top 5.
+            // Step 2: Reranking (Precision Filtering). Apply precision filtering.
+            // Sort candidates by semantic relevance. Retain top 5.
             var topResults = await _reranker.RerankAsync(question, searchResults, topN: 5);
 
 
-            // Step 3: Context Construction
-            // Build prompt context string
+            // Step 3: Context Construction. Build context.
+            // Construct prompt context string
             var contextBuilder = new StringBuilder();
             
-            // Token Budget / Window Safety (using character approximation for speed: ~4 chars = 1 token)
-            // Llama 3 8k context. Reserve 4k for context, 4k for prompt+response.
+            // Apply token budget and window safety using character approximation (~4 chars per token)
+            // Reserve 4k for context and 4k for prompt+response (Llama 3 8k context).
             const int MaxChars = 12000; 
             int currentLength = 0;
 
@@ -68,9 +68,9 @@ namespace FinAnalyzer.Engine.Services
                 currentLength += entry.Length;
             }
 
-            // Load prompt from file (Prototype: direct file read, Phase 5: Dependency Injection via IPromptProvider)
+            // Load prompt from file (Prototype: use direct file read; Phase 5: use Dependency Injection via IPromptProvider)
             string promptPath = Path.Combine(AppContext.BaseDirectory, "Prompts", "FinancialAnalysis.txt");
-            string promptTemplate = "Answer based on context: {{$Context}} \n Question: {{$Question}}"; // Fallback
+            string promptTemplate = "Answer based on context: {{$Context}} \n Question: {{$Question}}"; // Set fallback template
 
             if (File.Exists(promptPath))
             {
@@ -83,7 +83,7 @@ namespace FinAnalyzer.Engine.Services
                 ["Question"] = question
             };
 
-            // Step 4: Generation (Streaming)
+            // Step 4: Generation (Streaming). Generate response.
             var skResult = _kernel.InvokePromptStreamingAsync(promptTemplate, arguments);
 
             await foreach (var message in skResult)

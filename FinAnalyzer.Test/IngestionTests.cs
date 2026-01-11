@@ -64,18 +64,18 @@ namespace FinAnalyzer.Test
                 // Step 4: Generate Embeddings using Ollama.
                 _output.WriteLine("Generating Embeddings...");
                 
-                // Build Configuration using Engine's Loader
+                // Build Configuration via Engine's Loader.
                 var config = FinAnalyzer.Engine.Configuration.ConfigurationLoader.Load("appsettings.json");
 
                 using var httpClient = new System.Net.Http.HttpClient();
                 
-                // Bind Ollama Settings
-                var ollamaSection = config.GetSection("Ollama");
-                var ollamaConfigValue = ollamaSection.Get<FinAnalyzer.Core.Configuration.OllamaSettings>() 
-                                        ?? throw new InvalidOperationException("Ollama settings missing");
-                var ollamaSettings = Microsoft.Extensions.Options.Options.Create(ollamaConfigValue);
+                // Bind AI Settings.
+                var aiSection = config.GetSection("AIServices");
+                var aiConfigValue = aiSection.Get<FinAnalyzer.Core.Configuration.AISettings>() 
+                                        ?? throw new InvalidOperationException("AI settings missing");
+                var aiSettings = Microsoft.Extensions.Options.Options.Create(aiConfigValue);
                 
-                var embeddingService = new OllamaEmbeddingService(httpClient, ollamaSettings);
+                var embeddingService = new GenericEmbeddingService(httpClient, aiSettings);
                 
                 foreach (var chunk in chunks)
                 {
@@ -85,14 +85,13 @@ namespace FinAnalyzer.Test
                 // Step 5: Upsert chunks to Qdrant.
                 _output.WriteLine("Upserting to Qdrant...");
                 
-                // Bind Qdrant Settings
+                // Bind Qdrant Settings.
                 var qdrantSection = config.GetSection("Qdrant");
                 var qdrantConfigValue = qdrantSection.Get<FinAnalyzer.Core.Configuration.QdrantSettings>()
                                         ?? throw new InvalidOperationException("Qdrant settings missing");
                 var qdrantSettings = Microsoft.Extensions.Options.Options.Create(qdrantConfigValue);
                 
-                // Explicitly set host/port for client creation (since client doesn't take Options, only service does)
-                // Actually, the service takes Options, but we also create a raw client below for verification.
+                // Set host/port for client creation.
                 var qHost = qdrantSettings.Value.Host;
                 var qPort = qdrantSettings.Value.Port;
 
@@ -101,7 +100,7 @@ namespace FinAnalyzer.Test
 
                 var client = new QdrantClient(qHost, qPort);
                 
-                // Delay to allow indexing propagation.
+                // Delay for indexing propagation.
                 await Task.Delay(2000);
 
                 var collectionInfo = await client.GetCollectionInfoAsync(collectionName);
@@ -114,7 +113,7 @@ namespace FinAnalyzer.Test
                 try {
                     var client = new QdrantClient("localhost", 6334);
                     await client.DeleteCollectionAsync(collectionName);
-                } catch { /* ignore cleanup errors */ }
+                } catch { /* Ignore cleanup errors */ }
             }
         }
     }
