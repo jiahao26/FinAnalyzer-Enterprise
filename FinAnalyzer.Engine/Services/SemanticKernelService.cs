@@ -34,8 +34,8 @@ namespace FinAnalyzer.Engine.Services
         /// Executes a full RAG query pipeline.
         /// </summary>
         /// <param name="question">User's question.</param>
-        /// <returns>The LLM's generated answer based on retrieved context.</returns>
-        public async Task<string> QueryAsync(string question)
+        /// <returns>The LLM's generated answer based on retrieved context (streamed).</returns>
+        public async IAsyncEnumerable<string> QueryAsync(string question)
         {
             // Step 1: Retrieval (Hybrid/Vector Search)
             // Fetch more candidates (top 25) to give reranker enough data to work with.
@@ -49,11 +49,23 @@ namespace FinAnalyzer.Engine.Services
             // Step 3: Context Construction
             // Build prompt context string
             var contextBuilder = new StringBuilder();
+            
+            // Token Budget / Window Safety (using character approximation for speed: ~4 chars = 1 token)
+            // Llama 3 8k context. Reserve 4k for context, 4k for prompt+response.
+            const int MaxChars = 12000; 
+            int currentLength = 0;
+
             foreach (var item in topResults)
             {
-                contextBuilder.AppendLine($"Source: {item.SourceFileName} (Page {item.PageNumber})");
-                contextBuilder.AppendLine($"Content: {item.Text}");
-                contextBuilder.AppendLine("---");
+                var entry = $"Source: {item.SourceFileName} (Page {item.PageNumber})\nContent: {item.Text}\n---\n";
+                
+                if (currentLength + entry.Length > MaxChars)
+                {
+                    if (currentLength > 0) break;
+                }
+
+                contextBuilder.Append(entry);
+                currentLength += entry.Length;
             }
 
             // Load prompt from file (Prototype: direct file read, Phase 5: Dependency Injection via IPromptProvider)
@@ -71,10 +83,13 @@ namespace FinAnalyzer.Engine.Services
                 ["Question"] = question
             };
 
-            // Step 4: Generation
-            var skResult = await _kernel.InvokePromptAsync(promptTemplate, arguments);
+            // Step 4: Generation (Streaming)
+            var skResult = _kernel.InvokePromptStreamingAsync(promptTemplate, arguments);
 
-            return skResult.GetValue<string>() ?? string.Empty;
+            await foreach (var message in skResult)
+            {
+                yield return message.ToString();
+            }
         }
     }
 }

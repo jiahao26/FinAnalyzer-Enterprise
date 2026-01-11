@@ -6,6 +6,6 @@ namespace FinAnalyzer.Core.Interfaces
 {
     public interface IFileLoader
     {
-        Task<IEnumerable<PageContent>> LoadAsync(string filePath);
+        IAsyncEnumerable<PageContent> LoadAsync(string filePath);
     }
 }

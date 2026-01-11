@@ -8,7 +8,7 @@ tags: [philosophy, strategy, enterprise-ai, security]
 
 **To build a Secure, Local-First Enterprise AI solution that solves real business problems without compromising data sovereignty.**
 
-In the financial sector, data privacy is paramount. Banks and institutions cannot risk sending sensitive 10-K reports or credit assessments to public cloud APIs. **FinAnalyzer** is built to bridge the gap between powerful LLMs and strict enterpise compliance.
+In the financial sector, data privacy is paramount. Banks and institutions cannot risk sending sensitive **client reports**, **internal audits**, **credit assessments**, or **10-K filings** to public cloud APIs. **FinAnalyzer** is built to bridge the gap between powerful LLMs and strict enterprise compliance.
 
 ## 2. Strategic Pillars
 
@@ -33,6 +33,9 @@ This is not a hackathon prototype. It is engineered to meet the standards of a S
 
 - **Clean Architecture**: Strict separation of Core, Engine, and UI layers.
 - **Auditability**: Every AI decision is logged, and every claim is cited.
+- **Resilience**:
+  - **Idempotency**: Deterministic hashing ensures duplicate file uploads are handled gracefully.
+  - **Safety Limits**: Token budgets prevent context overflows before they crash the model.
 - **Testing**: A comprehensive suite of Unit and Integration tests proves reliability (see below).
 
 ## 3. Testing Philosophy
