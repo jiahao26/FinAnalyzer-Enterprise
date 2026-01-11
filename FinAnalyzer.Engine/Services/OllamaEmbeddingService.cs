@@ -4,6 +4,8 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using FinAnalyzer.Core.Interfaces;
+using Microsoft.Extensions.Options;
+using FinAnalyzer.Core.Configuration;
 
 namespace FinAnalyzer.Engine.Services
 {
@@ -16,11 +18,12 @@ namespace FinAnalyzer.Engine.Services
         private readonly string _modelName;
         private readonly string _baseUrl;
 
-        public OllamaEmbeddingService(HttpClient httpClient, string baseUrl = "http://localhost:11434", string modelName = "nomic-embed-text")
+        public OllamaEmbeddingService(HttpClient httpClient, IOptions<OllamaSettings> options)
         {
             _httpClient = httpClient;
-            _baseUrl = baseUrl;
-            _modelName = modelName;
+            var settings = options.Value;
+            _baseUrl = settings.BaseUrl;
+            _modelName = settings.ModelName;
         }
 
         /// <summary>

@@ -47,3 +47,7 @@ ollama_data/
 docker-compose.override.yml
 
 build/
+
+# Agent & Gemini
+.agent/
+.gemini/

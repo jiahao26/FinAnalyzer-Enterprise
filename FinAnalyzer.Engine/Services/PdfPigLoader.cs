@@ -5,6 +5,8 @@ using FinAnalyzer.Core.Models;
 using UglyToad.PdfPig;
 using UglyToad.PdfPig.Content;
 
+using UglyToad.PdfPig.DocumentLayoutAnalysis.WordExtractor;
+
 namespace FinAnalyzer.Engine.Services
 {
     public class PdfPigLoader : IFileLoader
@@ -20,7 +22,13 @@ namespace FinAnalyzer.Engine.Services
                 {
                     foreach (var page in document.GetPages())
                     {
-                        var text = page.Text;
+                        // Use NearestNeighbourWordExtractor to handle complex multi-column layouts (10-Ks)
+                        // This reconstructs document reading order more accurately than simple text extraction.
+                        var wordExtractor = NearestNeighbourWordExtractor.Instance;
+                        var words = wordExtractor.GetWords(page.Letters);
+                        
+                        var text = string.Join(" ", words.Select(w => w.Text));
+
                         if (!string.IsNullOrWhiteSpace(text))
                         {
                             // Map PDF page text to PageContent model.

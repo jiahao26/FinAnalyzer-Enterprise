@@ -13,6 +13,9 @@ graph TD
     Test --> Engine
 
     subgraph Engine Components
+        Config[ConfigurationLoader] --> Q
+        Config --> E
+        Config --> R
         SK[SemanticKernelService] --> Q[QdrantVectorService]
         SK --> R[TeiRerankerService]
         Q --> E[OllamaEmbeddingService]
@@ -75,6 +78,9 @@ FinAnalyzer_Enterprise/
 │
 ├── FinAnalyzer.Engine/             # [ App Layer ] Implementation of Core interfaces
 │   ├── FinAnalyzer.Engine.csproj
+│   ├── appsettings.json            # [ Config ] Centralized App Config
+│   ├── Configuration/
+│   │   └── ConfigurationLoader.cs  # [ Config ] Standardized Config Loading
 │   ├── Services/
 │   │   ├── OllamaEmbeddingService.cs
 │   │   ├── PdfPigLoader.cs
@@ -89,7 +95,8 @@ FinAnalyzer_Enterprise/
 └── FinAnalyzer.Test/               # [ Tests ] Unit & Integration Tests
     ├── FinAnalyzer.Test.csproj
     ├── InfrastructureTests.cs      # [ Verify ] Docker Service Connectivity
-    └── IngestionTests.cs           # [ Verify ] Full RAG Pipeline
+    ├── IngestionTests.cs           # [ Verify ] Full RAG Pipeline
+    └── TextChunkerTests.cs         # [ Verify ] Splitting Logic Unit Tests
 ```
 
 ## 4. Key Design Decisions
@@ -98,3 +105,4 @@ FinAnalyzer_Enterprise/
 2.  **DTO Separation**: `Models` in Core are pure DTOs (Data Transfer Objects). They do not contain logic.
 3.  **Interface-First**: We never depend on concrete classes (e.g., `QdrantVectorService`) in the UI, only on interfaces (`IVectorDbService`). This allows us to swap Qdrant for another DB later without breaking the UI.
 4.  **Centralized Build**: All build artifacts are output to `FinAnalyzer_Enterprise/build` (via `Directory.Build.props`) for security and antivirus exclusion.
+5.  **External Configuration**: We use `IOptions<T>` pattern. `FinAnalyzer.Engine` owns the `appsettings.json` and `ConfigurationLoader`, ensuring tests and UI share the exact same config logic.
