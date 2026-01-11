@@ -53,18 +53,22 @@ graph TD
 
 ---
 
-## 3. File Structure Map (Current & Planned)
+## 3. File Structure Map
 
-This map shows the **Solution Structure**. Items marked with `*` are **Planned for Phase 2**.
+This map shows the current **Solution Structure**.
 
 ```text
 FinAnalyzer_Enterprise/
-├── directory.build.props           # [ Build ] Common MSBuild settings
+├── Directory.Build.props           # [ Build ] Common MSBuild settings
 ├── docker-compose.yml              # [ Infra ] Database & AI Services
 ├── FinAnalyzer_Enterprise.slnx     # [ Sln ] VS 2026 Solution File
 │
 ├── FinAnalyzer.Core/               # [ Domain ] Pure business logic & contracts
 │   ├── FinAnalyzer.Core.csproj
+│   ├── Configuration/
+│   │   ├── AISettings.cs
+│   │   ├── QdrantSettings.cs
+│   │   └── TeiSettings.cs
 │   ├── Interfaces/
 │   │   ├── IEmbeddingService.cs
 │   │   ├── IFileLoader.cs
@@ -82,22 +86,36 @@ FinAnalyzer_Enterprise/
 │   ├── appsettings.json            # [ Config ] Centralized App Config
 │   ├── Configuration/
 │   │   └── ConfigurationLoader.cs  # [ Config ] Standardized Config Loading
-│   ├── Services/
-│   │   ├── GenericEmbeddingService.cs
-│   │   ├── PdfPigLoader.cs
-│   │   ├── QdrantVectorService.cs
-│   │   └── TextChunker.cs
+│   ├── Prompts/
+│   │   └── FinancialAnalysis.txt   # [ Prompt ] Master LLM Instruction
+│   └── Services/
+│       ├── GenericEmbeddingService.cs
+│       ├── PdfPigLoader.cs
+│       ├── QdrantVectorService.cs
+│       ├── SemanticKernelService.cs
+│       ├── TeiRerankerService.cs
+│       └── TextChunker.cs
 │
 ├── FinAnalyzer.UI/                 # [ Presentation ] WPF Application
 │   ├── FinAnalyzer.UI.csproj
+│   ├── App.xaml
+│   ├── App.xaml.cs
 │   ├── MainWindow.xaml             # [ View ] Main Shell
-│   └── App.xaml
+│   ├── MainWindow.xaml.cs
+│   └── ViewModels/
 │
 └── FinAnalyzer.Test/               # [ Tests ] Unit & Integration Tests
     ├── FinAnalyzer.Test.csproj
+    ├── Configuration/
     ├── InfrastructureTests.cs      # [ Verify ] Docker Service Connectivity
     ├── IngestionTests.cs           # [ Verify ] Full RAG Pipeline
-    └── TextChunkerTests.cs         # [ Verify ] Splitting Logic Unit Tests
+    ├── OrchestrationTests.cs       # [ Verify ] Semantic Kernel Flow
+    ├── TextChunkerTests.cs         # [ Verify ] Splitting Logic Unit Tests
+    └── Services/
+        ├── GenericEmbeddingServiceTests.cs
+        ├── PdfPigLoaderTests.cs
+        ├── QdrantVectorServiceTests.cs
+        └── TeiRerankerTests.cs
 ```
 
 ## 4. Key Design Decisions
@@ -108,3 +126,4 @@ FinAnalyzer_Enterprise/
 4.  **Centralized Build**: All build artifacts are output to `FinAnalyzer_Enterprise/build` (via `Directory.Build.props`) for security and antivirus exclusion.
 5.  **External Configuration**: We use `IOptions<T>` pattern. `FinAnalyzer.Engine` owns the `appsettings.json` and `ConfigurationLoader`, ensuring tests and UI share the exact same config logic.
 6.  **Streaming Pipeline**: The RAG flow returns `IAsyncEnumerable<string>` instead of `Task<string>`. This "Async Stream" is propagated from the LLM -> Kernel -> Service -> UI, enabling the "typing effect" and preventing UI freezes during long generation tasks.
+7.  **Hybrid AI Backend (BYOM)**: The `AISettings` class supports both `Ollama` and `OpenAI_Compatible` backends. Switching is done via `appsettings.json` without code changes, enabling teams to "Bring Your Own Model" (local vLLM, LM Studio, or cloud Azure OpenAI).

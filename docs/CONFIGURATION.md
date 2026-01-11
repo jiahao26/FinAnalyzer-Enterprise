@@ -58,7 +58,7 @@ The configuration file is divided into sections for each major service.
 
 ## 3. How to Change Configuration
 
-1.  Navigate to the build output directory (e.g., `FinAnalyzer_Enterprise/FinAnalyzer.UI/bin/Debug/net8.0`).
+1.  Navigate to the build output directory (e.g., `FinAnalyzer_Enterprise/FinAnalyzer.UI/bin/Debug/net10.0-windows`).
 2.  Open `appsettings.json` in any text editor.
 3.  Modify values (e.g., change `VectorSize` to 1024 or `Host` to a LAN IP).
 4.  Restart the application.

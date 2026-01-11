@@ -16,7 +16,8 @@ In the financial sector, data privacy is paramount. Banks and institutions canno
 
 The fundamental constraint of this project is clear: **No data leaves the local network.**
 
-- **Local Inference**: All reasoning is performed by quantized Llama-3 models running on on-premise hardware (via Ollama).
+- **Local Inference (Default)**: All reasoning is performed by quantized Llama-3 models running on on-premise hardware (via Ollama).
+- **Hybrid Option (BYOM)**: For teams with approved cloud endpoints, FinAnalyzer supports any OpenAI-compatible API (e.g., Azure OpenAI, vLLM, LM Studio) via configuration—no code changes required.
 - **Local Storage**: Vector embeddings are stored in a self-hosted Qdrant instance, never on a managed cloud service.
 - **Air-Gap Ready**: The system is designed to function without an active internet connection after initial model weights are downloaded.
 

@@ -3,8 +3,8 @@
 ## Prerequisites
 
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) (Windows with WSL2)
-- [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
-- Visual Studio 2022
+- [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
+- Visual Studio 2026
 
 ## Installation & Setup
 
@@ -31,5 +31,7 @@
 
     _Note: This might take a while depending on your internet connection._
 
+> [!TIP] > **Using a different LLM?** FinAnalyzer supports any OpenAI-compatible endpoint. See [CONFIGURATION.md](CONFIGURATION.md) to configure Azure OpenAI, vLLM, or LM Studio instead of Ollama.
+
 4.  **Run the Application**
-    Open `FinAnalyzer_Enterprise.sln` in Visual Studio and run the **FinAnalyzer.UI** project.
+    Open `FinAnalyzer_Enterprise.slnx` in Visual Studio and run the **FinAnalyzer.UI** project.
