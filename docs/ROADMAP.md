@@ -41,6 +41,7 @@ tags: [plan, project-management, dotnet, ai, rag]
 - [x] **Retrieval Logic**: Implement `QdrantVectorService.SearchAsync` (Vector Search).
 - [x] **Reranking Logic**: Implement `TeiRerankerService.RerankAsync` to filter top 50 -> top 5 relevant chunks.
 - [x] **Warm-up Strategy**: Implement `IModelLifecycle` to pre-load models (Ollama, TEI) on startup.
+- [x] **Hybrid AI Backend (BYOM)**: Refactor `AISettings` to support switching between Ollama and OpenAI-compatible endpoints via configuration.
 - [x] **Orchestration**: Implement `SemanticKernelService` to bind it all together:
   - `Input -> Vector Search -> Rerank -> Prompt Engineering (Context Stuffing) -> LLM -> Answer`.
 - [x] **Orchestration Tests**: Verify the pipeline flows correctly using Mocks.
