@@ -1,8 +1,8 @@
 # Secure Enterprise RAG Workstation (FinAnalyzer)
 
-![License](https://img.shields.io/badge/license-MIT-blue) ![.NET](https://img.shields.io/badge/.NET-8.0-purple) ![Architecture](https://img.shields.io/badge/Architecture-Clean-green) ![Status](https://img.shields.io/badge/Status-Phase%203%20Complete-green)
+![License](https://img.shields.io/badge/license-MIT-blue) ![.NET](https://img.shields.io/badge/.NET-10.0-purple) ![Architecture](https://img.shields.io/badge/Architecture-Clean-green) ![Status](https://img.shields.io/badge/Status-Phase%203%20Complete-green)
 
-**FinAnalyzer Enterprise** is an on-premise RAG workstation built for financial compliance teams. It automates analysis of sensitive 10-K reports using local vector retrieval and quantized LLMs, ensuring zero data egress.
+**FinAnalyzer Enterprise** is a secure, test-driven RAG workstation that solves real business intelligence problems without compromising data sovereignty. Built for financial compliance teams with professional software testing standards, it automates analysis of sensitive 10-K reports using on-premise vector retrieval and air-gapped LLMs—ensuring zero data egress while maintaining enterprise-grade reliability through comprehensive unit and integration testing.
 
 ## 📊 Progress Status
 
@@ -36,42 +36,42 @@ _Read more in [PHILOSOPHY.md](docs/PHILOSOPHY.md)._
 
 ## 🚀 Key Features
 
-| Feature                    | Description                                                                                     |
-| :------------------------- | :---------------------------------------------------------------------------------------------- |
-| **Air-Gapped by Design**   | Runs entirely offline with no dependency on public cloud APIs (OpenAI/Azure).                   |
-| **Clean Architecture**     | Strict separation of concerns (Core, Engine, UI) for maintainability.                           |
-| **Hybrid Search Pipeline** | Multistage retrieval using Qdrant (Vector), bge-reranker (Precision), and Llama-3 (Generation). |
-| **Auditable Grounding**    | Tailored citations for every claim with direct PDF links.                                       |
-| **Compliance Logging**     | Full audit trail of all queries and token usage.                                                |
-| **Financial Dashboard**    | High-density WPF interface optimized for analyst workflows.                                     |
-| **Token-Based Chunking**   | Smart splitting using GPT-4 compatible tokenizer for optimal Llama-3 context usage.             |
-| **Idempotent Ingestion**   | Deterministic chunk IDs ensure specific file versions are never duplicated in Vector DB.        |
-| **Streaming Pipeline**     | End-to-end `IAsyncEnumerable` support for instant UI feedback (Typing effect).                  |
-| **External Config**        | Standardized `appsettings.json` for all environment variables (Hot-swappable).                  |
+| Feature                    | Description                                                                                 |
+| :------------------------- | :------------------------------------------------------------------------------------------ |
+| **Air-Gapped by Design**   | Built to run offline (default), with optional support for secure Cloud APIs (Hybrid).       |
+| **Clean Architecture**     | Strict separation of concerns (Core, Engine, UI) for maintainability.                       |
+| **Hybrid Search Pipeline** | Multistage retrieval using Qdrant (Vector), bge-reranker (Precision), and LLM (Generation). |
+| **Auditable Grounding**    | Tailored citations for every claim with direct PDF links.                                   |
+| **Compliance Logging**     | Full audit trail of all queries and token usage.                                            |
+| **Financial Dashboard**    | High-density WPF interface optimized for analyst workflows.                                 |
+| **Token-Based Chunking**   | Smart splitting using GPT-4 compatible tokenizer for optimal LLM context usage.             |
+| **Idempotent Ingestion**   | Deterministic chunk IDs ensure specific file versions are never duplicated in Vector DB.    |
+| **Streaming Pipeline**     | End-to-end `IAsyncEnumerable` support for instant UI feedback (Typing effect).              |
+| **External Config**        | Standardized `appsettings.json` for all environment variables (Hot-swappable).              |
 
 ## 🛠️ Technology Stack
 
-| Component        | Technology                    | Descriptions                       |
-| :--------------- | :---------------------------- | :--------------------------------- |
-| **UI Framework** | **WPF (.NET 8)**              | Modern Desktop (Material Design)   |
-| **Orchestrator** | **Microsoft Semantic Kernel** | AI Agent Orchestration             |
-| **Vector DB**    | **Qdrant**                    | Local Docker Container             |
-| **Local LLM**    | **Llama-3-8B-Instruct**       | Q8 Quantization (via Ollama)       |
-| **Reranker**     | **bge-reranker-v2-m3**        | Text Embeddings Inference (Docker) |
-| **Embeddings**   | **nomic-embed-text-v1.5**     | Matryoshka Enabled (via Ollama)    |
-| **PDF Engine**   | **PdfPig**                    | Apache 2.0 License (No iText AGPL) |
-| **Tokenizer**    | **Microsoft.ML.Tokenizers**   | GPT-4/Llama-3 Token Counting       |
+| Component        | Technology                    | Descriptions                        |
+| :--------------- | :---------------------------- | :---------------------------------- |
+| **UI Framework** | **WPF (.NET 10)**             | Modern Desktop (Material Design)    |
+| **Orchestrator** | **Microsoft Semantic Kernel** | AI Agent Orchestration              |
+| **Vector DB**    | **Qdrant**                    | Local Docker Container              |
+| **LLM Backend**  | **Hybrid (Ollama / OpenAI)**  | Configurable (Llama-3, GPT-4, vLLM) |
+| **Reranker**     | **bge-reranker-v2-m3**        | Text Embeddings Inference (Docker)  |
+| **Embeddings**   | **Hybrid (Ollama / OpenAI)**  | Configurable (Nomic / Ada-002)      |
+| **PDF Engine**   | **PdfPig**                    | Apache 2.0 License (No iText AGPL)  |
+| **Tokenizer**    | **Microsoft.ML.Tokenizers**   | GPT-4/Llama-3 Token Counting        |
 
 ## 📂 Structure
 
 The solution follows a strict Clean Architecture pattern, divided into four core projects:
 
-| Project                | Role                                     | Key Dependencies                                        |
-| :--------------------- | :--------------------------------------- | :------------------------------------------------------ |
-| **FinAnalyzer.Core**   | **Contracts & Models** (Domain Layer)    | `None` (Pure .NET)                                      |
-| **FinAnalyzer.Engine** | **Logic & Services** (Application Layer) | `Microsoft.SemanticKernel`, `Qdrant.Client`, `PdfPig`   |
-| **FinAnalyzer.UI**     | **Presentation** (Presentation Layer)    | `CommunityToolkit.Mvvm`, `Microsoft.Extensions.Hosting` |
-| **FinAnalyzer.Test**   | **Verification** (Testing Layer)         | `xUnit`, `NSubstitute`, `FluentAssertions`              |
+| Project                | Role                                     | Key Dependencies                                                                 |
+| :--------------------- | :--------------------------------------- | :------------------------------------------------------------------------------- |
+| **FinAnalyzer.Core**   | **Contracts & Models** (Domain Layer)    | `None` (Pure .NET)                                                               |
+| **FinAnalyzer.Engine** | **Logic & Services** (Application Layer) | `Microsoft.SemanticKernel`, `Qdrant.Client`, `PdfPig`, `Microsoft.ML.Tokenizers` |
+| **FinAnalyzer.UI**     | **Presentation** (Presentation Layer)    | `CommunityToolkit.Mvvm`, `Microsoft.Extensions.Hosting`                          |
+| **FinAnalyzer.Test**   | **Verification** (Testing Layer)         | `xUnit`, `NSubstitute`, `FluentAssertions`                                       |
 
 ## 📄 License
 

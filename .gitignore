@@ -34,6 +34,11 @@ packages/
 
 # Logs
 *.log
+msbuild.log
+
+# Test Results
+TestResults/
+**/TestResults/
 
 # Docker & AI Data
 # Exclude local vector DB storage and model weights
@@ -51,3 +56,4 @@ build/
 # Agent & Gemini
 .agent/
 .gemini/
+

@@ -12,18 +12,18 @@ namespace FinAnalyzer.Engine.Services
     {
         public async IAsyncEnumerable<PageContent> LoadAsync(string filePath)
         {
-            // Stream pages one by one to avoid loading entire document into memory
-            // This is "cold" loading - we open file and iterate.
+            // Stream pages one by one to avoid loading entire document into memory.
+            // Open file and iterate (cold loading).
             using var document = PdfDocument.Open(filePath);
             
             foreach (var page in document.GetPages())
             {
-                // Yield to ensure we don't block the thread entirely during tight loop, 
-                // allowing caller to process the yielded item.
+                // Yield to prevent thread blocking during tight loop;
+                // allow caller to process yielded item.
                 await Task.Yield(); 
 
                 var wordExtractor = NearestNeighbourWordExtractor.Instance;
-                // Parsing happens here on .Letters access usually
+                // Execute parsing on .Letters access.
                 var words = wordExtractor.GetWords(page.Letters);
                 
                 var text = string.Join(" ", words.Select(w => w.Text));

@@ -34,12 +34,14 @@ namespace FinAnalyzer.Test
             mockReranker.RerankAsync(question, dummyResults, Arg.Any<int>()).Returns(rerankedResults);
 
             // Act
-            // Act
-            try {
+            try
+            {
                 var result = service.QueryAsync(question);
-                await foreach (var _ in result) { } // Drain execution to ensure pipeline flows
-            } catch (KernelException) {
-                
+                await foreach (var _ in result) { } // Drain execution to ensure pipeline flows.
+            }
+            catch (KernelException)
+            {
+                // Expected: Kernel may throw when no prompt is configured
             }
 
             // Assert

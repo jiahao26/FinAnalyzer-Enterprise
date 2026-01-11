@@ -30,7 +30,7 @@ tags: [plan, project-management, dotnet, ai, rag]
   - [x] **Embedding Interface**: Define `IEmbeddingService` for vector generation.
 - [x] **PDF Reader**: Implement `PdfPigLoader` to extract text from multi-column PDFs properly.
 - [x] **Chunking Engine**: Implement `TextChunker` with sliding windows (e.g., 500 tokens, 100 overlap).
-- [x] **Embedding Generation**: Implement `OllamaEmbeddingService` to convert text chunks to vectors using `nomic-embed-text-v1.5`.
+- [x] **Embedding Generation**: Implement `GenericEmbeddingService` to convert text chunks to vectors using `nomic-embed-text-v1.5`.
 - [x] **Vector Upsert**: Implement `QdrantVectorService.UpsertAsync` to push chunks + metadata (page number, filename) to the DB.
 - [x] **Integration Tests**: Verify the full ingestion pipeline (PDF -> Chunk -> Qdrant) using `IngestionTests.cs`.
 

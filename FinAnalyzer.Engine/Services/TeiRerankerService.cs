@@ -13,8 +13,8 @@ using FinAnalyzer.Core.Configuration;
 namespace FinAnalyzer.Engine.Services
 {
     /// <summary>
-    /// Service for reranking search results using a Text Embeddings Inference (TEI) server.
-    /// Improves result relevance using a cross-encoder model.
+    /// Service for reranking search results via Text Embeddings Inference (TEI) server.
+    /// Improve result relevance using cross-encoder model.
     /// </summary>
     public class TeiRerankerService : IRerankerService, IModelLifecycle
     {
@@ -28,7 +28,7 @@ namespace FinAnalyzer.Engine.Services
         }
 
         /// <summary>
-        /// Reranks a list of initial search results based on their relevance to the query.
+        /// Rerank list of initial search results based on query relevance.
         /// </summary>
         /// <param name="query">The original search query.</param>
         /// <param name="results">The initial candidate results from vector search.</param>
@@ -54,7 +54,7 @@ namespace FinAnalyzer.Engine.Services
             var response = await _httpClient.PostAsync($"{_baseUrl}/rerank", content);
             response.EnsureSuccessStatusCode();
 
-            // TEI server returns JSON list of scores and indices.
+            // Retrieve JSON list of scores and indices from TEI server.
             var responseString = await response.Content.ReadAsStringAsync();
             var rerankResponses = JsonSerializer.Deserialize<List<TeiRerankResponse>>(responseString);
 
