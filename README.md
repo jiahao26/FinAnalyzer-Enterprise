@@ -44,7 +44,9 @@ _Read more in [PHILOSOPHY.md](docs/PHILOSOPHY.md)._
 | **Auditable Grounding**    | Tailored citations for every claim with direct PDF links.                                       |
 | **Compliance Logging**     | Full audit trail of all queries and token usage.                                                |
 | **Financial Dashboard**    | High-density WPF interface optimized for analyst workflows.                                     |
-| **Smart Chunking**         | Recursive character splitting preserves document structure and paragraphs.                      |
+| **Token-Based Chunking**   | Smart splitting using GPT-4 compatible tokenizer for optimal Llama-3 context usage.             |
+| **Idempotent Ingestion**   | Deterministic chunk IDs ensure specific file versions are never duplicated in Vector DB.        |
+| **Streaming Pipeline**     | End-to-end `IAsyncEnumerable` support for instant UI feedback (Typing effect).                  |
 | **External Config**        | Standardized `appsettings.json` for all environment variables (Hot-swappable).                  |
 
 ## 🛠️ Technology Stack
@@ -58,6 +60,7 @@ _Read more in [PHILOSOPHY.md](docs/PHILOSOPHY.md)._
 | **Reranker**     | **bge-reranker-v2-m3**        | Text Embeddings Inference (Docker) |
 | **Embeddings**   | **nomic-embed-text-v1.5**     | Matryoshka Enabled (via Ollama)    |
 | **PDF Engine**   | **PdfPig**                    | Apache 2.0 License (No iText AGPL) |
+| **Tokenizer**    | **Microsoft.ML.Tokenizers**   | GPT-4/Llama-3 Token Counting       |
 
 ## 📂 Structure
 

@@ -34,8 +34,10 @@ namespace FinAnalyzer.Test
             mockReranker.RerankAsync(question, dummyResults, Arg.Any<int>()).Returns(rerankedResults);
 
             // Act
+            // Act
             try {
-                await service.QueryAsync(question);
+                var result = service.QueryAsync(question);
+                await foreach (var _ in result) { } // Drain execution to ensure pipeline flows
             } catch (KernelException) {
                 
             }

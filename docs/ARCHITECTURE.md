@@ -37,13 +37,13 @@ graph TD
 
 **Role:** The "Brain" and "Hands". Implements the interfaces defined in Core using specific libraries.
 
-- **Dependencies:** `Microsoft.SemanticKernel`, `Qdrant.Client`, `PdfPig` (Planned), `OllamaSharp` or `Microsoft.SemanticKernel.Connectors.Ollama` (Planned).
+- **Dependencies:** `Microsoft.SemanticKernel`, `Qdrant.Client`, `PdfPig` (Planned), `Microsoft.ML.Tokenizers` (Added).
 
 ### 🔵 FinAnalyzer.UI (Presentation Layer)
 
 **Role:** The "Face". A WPF application using MVVM pattern.
 
-- **Dependencies:** `CommunityToolkit.Mvvm`, `Microsoft.Extensions.Hosting`.
+- **Dependencies:** `CommunityToolkit.Mvvm`, `Microsoft.Extensions.Hosting`, `System.Linq.Async` (via Transitive Core).
 
 ### 🟢 FinAnalyzer.Test (Verification Layer)
 
@@ -106,3 +106,4 @@ FinAnalyzer_Enterprise/
 3.  **Interface-First**: We never depend on concrete classes (e.g., `QdrantVectorService`) in the UI, only on interfaces (`IVectorDbService`). This allows us to swap Qdrant for another DB later without breaking the UI.
 4.  **Centralized Build**: All build artifacts are output to `FinAnalyzer_Enterprise/build` (via `Directory.Build.props`) for security and antivirus exclusion.
 5.  **External Configuration**: We use `IOptions<T>` pattern. `FinAnalyzer.Engine` owns the `appsettings.json` and `ConfigurationLoader`, ensuring tests and UI share the exact same config logic.
+6.  **Streaming Pipeline**: The RAG flow returns `IAsyncEnumerable<string>` instead of `Task<string>`. This "Async Stream" is propagated from the LLM -> Kernel -> Service -> UI, enabling the "typing effect" and preventing UI freezes during long generation tasks.

@@ -7,6 +7,6 @@ namespace FinAnalyzer.Core.Interfaces
     public interface IRagService
     {
         Task IngestDocumentAsync(string filePath);
-        Task<string> QueryAsync(string question);
+        IAsyncEnumerable<string> QueryAsync(string question);
     }
 }

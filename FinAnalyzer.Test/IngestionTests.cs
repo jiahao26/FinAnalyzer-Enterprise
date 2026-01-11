@@ -22,6 +22,7 @@ namespace FinAnalyzer.Test
         }
 
         [Fact]
+        [Trait("Category", "Integration")]
          public async Task FullIngestionPipeline_ShouldWork()
         {
             _output.WriteLine("Starting Ingestion Test...");
@@ -45,7 +46,12 @@ namespace FinAnalyzer.Test
                 // Step 2: Load PDF using PdfPigLoader.
                 _output.WriteLine("Loading PDF...");
                 var loader = new PdfPigLoader();
-                var pages = await loader.LoadAsync(pdfPath);
+                var pages = new System.Collections.Generic.List<FinAnalyzer.Core.Models.PageContent>();
+                await foreach (var p in loader.LoadAsync(pdfPath))
+                {
+                    pages.Add(p);
+                }
+                
                 Assert.NotEmpty(pages);
                 Assert.Contains("FinAnalyzer", pages.First().Text);
 
@@ -65,7 +71,9 @@ namespace FinAnalyzer.Test
                 
                 // Bind Ollama Settings
                 var ollamaSection = config.GetSection("Ollama");
-                var ollamaSettings = Microsoft.Extensions.Options.Options.Create(ollamaSection.Get<FinAnalyzer.Core.Configuration.OllamaSettings>());
+                var ollamaConfigValue = ollamaSection.Get<FinAnalyzer.Core.Configuration.OllamaSettings>() 
+                                        ?? throw new InvalidOperationException("Ollama settings missing");
+                var ollamaSettings = Microsoft.Extensions.Options.Options.Create(ollamaConfigValue);
                 
                 var embeddingService = new OllamaEmbeddingService(httpClient, ollamaSettings);
                 
@@ -79,7 +87,9 @@ namespace FinAnalyzer.Test
                 
                 // Bind Qdrant Settings
                 var qdrantSection = config.GetSection("Qdrant");
-                var qdrantSettings = Microsoft.Extensions.Options.Options.Create(qdrantSection.Get<FinAnalyzer.Core.Configuration.QdrantSettings>());
+                var qdrantConfigValue = qdrantSection.Get<FinAnalyzer.Core.Configuration.QdrantSettings>()
+                                        ?? throw new InvalidOperationException("Qdrant settings missing");
+                var qdrantSettings = Microsoft.Extensions.Options.Options.Create(qdrantConfigValue);
                 
                 // Explicitly set host/port for client creation (since client doesn't take Options, only service does)
                 // Actually, the service takes Options, but we also create a raw client below for verification.
