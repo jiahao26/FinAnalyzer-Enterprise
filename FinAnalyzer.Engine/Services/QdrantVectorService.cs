@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FinAnalyzer.Core.Interfaces;
 using FinAnalyzer.Core.Models;
+using FinAnalyzer.Core.Configuration;
 using Qdrant.Client;
 using Qdrant.Client.Grpc;
 
@@ -17,15 +18,15 @@ namespace FinAnalyzer.Engine.Services
     {
         private readonly QdrantClient _client;
         
-        // Note: nomic-embed-text-v1.5 model always outputs 768 dimensions.
-        // If switching models (e.g. to mxbai-embed-large), MUST update this value.
-        private const int VectorSize = 768; 
-
+        // Injected via Constructor
+        private readonly int _vectorSize;
         private readonly IEmbeddingService _embeddingService;
 
-        public QdrantVectorService(IEmbeddingService embeddingService, string host = "localhost", int port = 6334)
+        public QdrantVectorService(IEmbeddingService embeddingService, Microsoft.Extensions.Options.IOptions<QdrantSettings> options)
         {
-            _client = new QdrantClient(host, port);
+            var settings = options.Value;
+            _client = new QdrantClient(settings.Host, settings.Port);
+            _vectorSize = settings.VectorSize;
             _embeddingService = embeddingService;
         }
 
@@ -40,7 +41,7 @@ namespace FinAnalyzer.Engine.Services
             var collections = await _client.ListCollectionsAsync();
             if (!collections.Contains(collectionName))
             {
-                await _client.CreateCollectionAsync(collectionName, new VectorParams { Size = VectorSize, Distance = Distance.Cosine });
+                await _client.CreateCollectionAsync(collectionName, new VectorParams { Size = (ulong)_vectorSize, Distance = Distance.Cosine });
             }
 
             var points = new List<PointStruct>();
@@ -52,7 +53,7 @@ namespace FinAnalyzer.Engine.Services
                     throw new ArgumentException($"Chunk {chunk.Id} has no embedding vector.");
                 }
                 
-                if (chunk.Vector.Length != VectorSize)
+                if (chunk.Vector.Length != _vectorSize)
                 {
                      if (chunk.Vector.IsEmpty) throw new ArgumentException($"Chunk {chunk.Id} has no embedding vector.");
                 }

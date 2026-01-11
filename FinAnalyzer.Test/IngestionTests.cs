@@ -7,6 +7,8 @@ using UglyToad.PdfPig.Writer;
 using UglyToad.PdfPig.Fonts.Standard14Fonts;
 using Xunit;
 using Qdrant.Client;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace FinAnalyzer.Test
 {
@@ -55,8 +57,17 @@ namespace FinAnalyzer.Test
 
                 // Step 4: Generate Embeddings using Ollama.
                 _output.WriteLine("Generating Embeddings...");
+                
+                // Build Configuration using Engine's Loader
+                var config = FinAnalyzer.Engine.Configuration.ConfigurationLoader.Load("appsettings.json");
+
                 using var httpClient = new System.Net.Http.HttpClient();
-                var embeddingService = new OllamaEmbeddingService(httpClient);
+                
+                // Bind Ollama Settings
+                var ollamaSection = config.GetSection("Ollama");
+                var ollamaSettings = Microsoft.Extensions.Options.Options.Create(ollamaSection.Get<FinAnalyzer.Core.Configuration.OllamaSettings>());
+                
+                var embeddingService = new OllamaEmbeddingService(httpClient, ollamaSettings);
                 
                 foreach (var chunk in chunks)
                 {
@@ -65,10 +76,20 @@ namespace FinAnalyzer.Test
 
                 // Step 5: Upsert chunks to Qdrant.
                 _output.WriteLine("Upserting to Qdrant...");
-                var vectorService = new QdrantVectorService(embeddingService, "localhost", 6334); 
+                
+                // Bind Qdrant Settings
+                var qdrantSection = config.GetSection("Qdrant");
+                var qdrantSettings = Microsoft.Extensions.Options.Options.Create(qdrantSection.Get<FinAnalyzer.Core.Configuration.QdrantSettings>());
+                
+                // Explicitly set host/port for client creation (since client doesn't take Options, only service does)
+                // Actually, the service takes Options, but we also create a raw client below for verification.
+                var qHost = qdrantSettings.Value.Host;
+                var qPort = qdrantSettings.Value.Port;
+
+                var vectorService = new QdrantVectorService(embeddingService, qdrantSettings); 
                 await vectorService.UpsertAsync(collectionName, chunks);
 
-                var client = new QdrantClient("localhost", 6334);
+                var client = new QdrantClient(qHost, qPort);
                 
                 // Delay to allow indexing propagation.
                 await Task.Delay(2000);

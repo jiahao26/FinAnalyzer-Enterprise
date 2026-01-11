@@ -7,6 +7,8 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using FinAnalyzer.Core.Interfaces;
 using FinAnalyzer.Core.Models;
+using Microsoft.Extensions.Options;
+using FinAnalyzer.Core.Configuration;
 
 namespace FinAnalyzer.Engine.Services
 {
@@ -19,10 +21,10 @@ namespace FinAnalyzer.Engine.Services
         private readonly HttpClient _httpClient;
         private readonly string _baseUrl;
 
-        public TeiRerankerService(HttpClient httpClient, string baseUrl = "http://localhost:8080")
+        public TeiRerankerService(HttpClient httpClient, IOptions<TeiSettings> options)
         {
             _httpClient = httpClient;
-            _baseUrl = baseUrl;
+            _baseUrl = options.Value.BaseUrl;
         }
 
         /// <summary>

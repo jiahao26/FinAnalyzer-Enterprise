@@ -2,6 +2,7 @@ using System;
 using System.Text;
 using System.Threading.Tasks;
 using FinAnalyzer.Core.Interfaces;
+using System.IO;
 using Microsoft.SemanticKernel;
 
 namespace FinAnalyzer.Engine.Services
@@ -46,28 +47,32 @@ namespace FinAnalyzer.Engine.Services
 
 
             // Step 3: Context Construction
-            // Build prompt including retrieved text chunks for LLM to answer from.
+            // Build prompt context string
             var contextBuilder = new StringBuilder();
-            contextBuilder.AppendLine("You are a specialized financial analyst helper.");
-            contextBuilder.AppendLine("Answer the question using ONLY the provided context below.");
-            contextBuilder.AppendLine("If the answer isn't in the context, say 'I don't have enough information'.");
-            contextBuilder.AppendLine("Cite your sources by referring to the filename and page number provided.");
-            contextBuilder.AppendLine("\n--- CONTEXT START ---");
-
             foreach (var item in topResults)
             {
                 contextBuilder.AppendLine($"Source: {item.SourceFileName} (Page {item.PageNumber})");
                 contextBuilder.AppendLine($"Content: {item.Text}");
                 contextBuilder.AppendLine("---");
             }
-            contextBuilder.AppendLine("--- CONTEXT END ---\n");
-            
-            contextBuilder.AppendLine($"Question: {question}");
-            contextBuilder.AppendLine("Answer:");
+
+            // Load prompt from file (Prototype: direct file read, Phase 5: Dependency Injection via IPromptProvider)
+            string promptPath = Path.Combine(AppContext.BaseDirectory, "Prompts", "FinancialAnalysis.txt");
+            string promptTemplate = "Answer based on context: {{$Context}} \n Question: {{$Question}}"; // Fallback
+
+            if (File.Exists(promptPath))
+            {
+                promptTemplate = await File.ReadAllTextAsync(promptPath);
+            }
+
+            var arguments = new KernelArguments()
+            {
+                ["Context"] = contextBuilder.ToString(),
+                ["Question"] = question
+            };
 
             // Step 4: Generation
-            // Send constructed prompt to LLM (via Semantic Kernel) to get final answer.
-            var skResult = await _kernel.InvokePromptAsync(contextBuilder.ToString());
+            var skResult = await _kernel.InvokePromptAsync(promptTemplate, arguments);
 
             return skResult.GetValue<string>() ?? string.Empty;
         }
