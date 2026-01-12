@@ -4,9 +4,190 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FinAnalyzer.UI"
+        xmlns:vm="clr-namespace:FinAnalyzer.UI.ViewModels"
+        xmlns:views="clr-namespace:FinAnalyzer.UI.Views"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="FinAnalyzer - Enterprise RAG Workstation" 
+        Height="800" Width="1200"
+        MinHeight="600" MinWidth="900"
+        Background="{StaticResource BackgroundDarkBrush}"
+        WindowStartupLocation="CenterScreen">
 
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
+            <views:DashboardView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:DocumentsViewModel}">
+            <views:DocumentsView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:ChatViewModel}">
+            <views:ChatView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
+            <views:SettingsView />
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="240" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Sidebar -->
+        <Border Background="{StaticResource SurfaceDarkBrush}" 
+                BorderBrush="{StaticResource BorderDarkBrush}" BorderThickness="0,0,1,0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!-- Logo Section -->
+                <Border Padding="20,24,20,20" BorderBrush="{StaticResource BorderDarkBrush}" BorderThickness="0,0,0,1">
+                    <StackPanel Orientation="Horizontal">
+                        <Border Width="40" Height="40" CornerRadius="10" Margin="0,0,12,0">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#2563EB" Offset="0" />
+                                    <GradientStop Color="#3B82F6" Offset="1" />
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <TextBlock Text="📊" FontSize="18" 
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="FINANALYZER" FontSize="14" FontWeight="Bold" 
+                                       Foreground="{StaticResource TextPrimaryBrush}" />
+                            <TextBlock Text="Enterprise RAG Workstation" FontSize="10" 
+                                       Foreground="{StaticResource TextMutedBrush}" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Navigation -->
+                <StackPanel Grid.Row="1" Margin="12,20,12,0">
+                    <TextBlock Text="MAIN MENU" FontSize="10" FontWeight="SemiBold" 
+                               Foreground="{StaticResource TextMutedBrush}" 
+                               Margin="12,0,0,12" />
+
+                    <RadioButton Style="{StaticResource NavButton}" 
+                                 IsChecked="True"
+                                 Command="{Binding NavigateToDashboardCommand}"
+                                 GroupName="Navigation">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="📊" FontSize="16" Margin="0,0,12,0" />
+                            <TextBlock Text="Dashboard" FontSize="13" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </RadioButton>
+
+                    <RadioButton Style="{StaticResource NavButton}" 
+                                 Command="{Binding NavigateToDocumentsCommand}"
+                                 GroupName="Navigation" Margin="0,4,0,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="📁" FontSize="16" Margin="0,0,12,0" />
+                            <TextBlock Text="Documents" FontSize="13" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </RadioButton>
+
+                    <RadioButton Style="{StaticResource NavButton}" 
+                                 Command="{Binding NavigateToChatCommand}"
+                                 GroupName="Navigation" Margin="0,4,0,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="💬" FontSize="16" Margin="0,0,12,0" />
+                            <TextBlock Text="RAG Analysis" FontSize="13" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </RadioButton>
+
+                    <RadioButton Style="{StaticResource NavButton}" 
+                                 Command="{Binding NavigateToSettingsCommand}"
+                                 GroupName="Navigation" Margin="0,4,0,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="⚙️" FontSize="16" Margin="0,0,12,0" />
+                            <TextBlock Text="Settings" FontSize="13" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </RadioButton>
+                </StackPanel>
+
+                <!-- Footer Status -->
+                <Border Grid.Row="2" Padding="16" BorderBrush="{StaticResource BorderDarkBrush}" BorderThickness="0,1,0,0">
+                    <StackPanel>
+                        <Border Background="#1A10B981" CornerRadius="8" Padding="12,8" Margin="0,0,0,12">
+                            <StackPanel Orientation="Horizontal">
+                                <Ellipse Width="8" Height="8" Fill="{StaticResource AccentSuccessBrush}" Margin="0,0,8,0" />
+                                <TextBlock Text="Air-Gapped Mode" FontSize="11" FontWeight="Medium" 
+                                           Foreground="{StaticResource AccentSuccessBrush}" />
+                            </StackPanel>
+                        </Border>
+
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- Main Content Area -->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!-- Header Bar -->
+            <Border Background="{StaticResource SurfaceDarkBrush}" 
+                    BorderBrush="{StaticResource BorderDarkBrush}" BorderThickness="0,0,0,1"
+                    Padding="24,16">
+                <Grid>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock FontSize="16" FontWeight="SemiBold" 
+                                   Foreground="{StaticResource TextPrimaryBrush}">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Text" Value="Dashboard" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SelectedNavIndex}" Value="1">
+                                            <Setter Property="Text" Value="Document Repository" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding SelectedNavIndex}" Value="2">
+                                            <Setter Property="Text" Value="RAG Analysis" />
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding SelectedNavIndex}" Value="3">
+                                            <Setter Property="Text" Value="Settings" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Style="{StaticResource IconButton}" Content="🔔" FontSize="16" Margin="0,0,8,0">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Grid>
+                                        <Border x:Name="border" Background="Transparent" CornerRadius="18" 
+                                                Width="36" Height="36">
+                                            <TextBlock Text="🔔" FontSize="16" 
+                                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        </Border>
+                                        <Ellipse Width="8" Height="8" Fill="#DC2626" 
+                                                 HorizontalAlignment="Right" VerticalAlignment="Top"
+                                                 Margin="0,4,4,0" />
+                                    </Grid>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="border" Property="Background" Value="{StaticResource SurfaceDarkHoverBrush}" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- Content -->
+            <ContentControl Grid.Row="1" Content="{Binding CurrentView}" />
+        </Grid>
     </Grid>
 </Window>

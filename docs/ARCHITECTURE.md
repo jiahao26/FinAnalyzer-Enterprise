@@ -98,11 +98,38 @@ FinAnalyzer_Enterprise/
 │
 ├── FinAnalyzer.UI/                 # [ Presentation ] WPF Application
 │   ├── FinAnalyzer.UI.csproj
-│   ├── App.xaml
-│   ├── App.xaml.cs
-│   ├── MainWindow.xaml             # [ View ] Main Shell
+│   ├── appsettings.json            # [ Config ] UI Configuration (copy)
+│   ├── App.xaml                    # [ Entry ] Application Definition
+│   ├── App.xaml.cs                 # [ Entry ] DI Container Setup
+│   ├── MainWindow.xaml             # [ View ] Main Shell Window
 │   ├── MainWindow.xaml.cs
-│   └── ViewModels/
+│   ├── Converters/                 # [ UI Utils ] Value Converters
+│   │   ├── BoolToVisibilityConverter.cs
+│   │   ├── CollectionToVisibilityConverter.cs
+│   │   └── StringToVisibilityConverter.cs
+│   ├── Models/                     # [ UI Models ] View-specific data models
+│   │   ├── ChatMessage.cs
+│   │   ├── Citation.cs
+│   │   ├── DocumentItem.cs
+│   │   ├── PipelineStep.cs
+│   │   └── ServiceHealthInfo.cs
+│   ├── Services/                   # [ UI Services ] UI-specific services
+│   │   ├── DocumentStore.cs        # Shared document state
+│   │   └── ServiceHealthChecker.cs # Health check utility
+│   ├── Themes/                     # [ Styles ] Global themes and styles
+│   │   └── DarkTheme.xaml
+│   ├── ViewModels/                 # [ MVVM ] Application logic
+│   │   ├── ViewModelBase.cs
+│   │   ├── MainViewModel.cs
+│   │   ├── DashboardViewModel.cs
+│   │   ├── DocumentsViewModel.cs
+│   │   ├── ChatViewModel.cs
+│   │   └── SettingsViewModel.cs
+│   └── Views/                      # [ Views ] User controls
+│       ├── DashboardView.xaml
+│       ├── DocumentsView.xaml
+│       ├── ChatView.xaml
+│       └── SettingsView.xaml
 │
 └── FinAnalyzer.Test/               # [ Tests ] Unit & Integration Tests
     ├── FinAnalyzer.Test.csproj

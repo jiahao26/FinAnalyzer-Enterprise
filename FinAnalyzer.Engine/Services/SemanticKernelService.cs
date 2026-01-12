@@ -1,9 +1,13 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using FinAnalyzer.Core.Interfaces;
 using System.IO;
 using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel.Connectors.OpenAI;
 
 namespace FinAnalyzer.Engine.Services
 {
@@ -15,19 +19,31 @@ namespace FinAnalyzer.Engine.Services
         private readonly IVectorDbService _vectorDb;
         private readonly IRerankerService _reranker;
         private readonly Kernel _kernel;
+        private readonly IngestionService? _ingestionService;
         
         private const string CollectionName = "finance_docs";
 
-        public SemanticKernelService(IVectorDbService vectorDb, IRerankerService reranker, Kernel kernel)
+        public SemanticKernelService(
+            IVectorDbService vectorDb,
+            IRerankerService reranker,
+            Kernel kernel,
+            IngestionService? ingestionService = null)
         {
             _vectorDb = vectorDb;
             _reranker = reranker;
             _kernel = kernel;
+            _ingestionService = ingestionService;
         }
 
-        public Task IngestDocumentAsync(string filePath)
+        public async Task IngestDocumentAsync(
+            string filePath,
+            IProgress<int>? progress = null,
+            CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException("Use the Ingestion Pipeline components directly for now.");
+            if (_ingestionService == null)
+                throw new InvalidOperationException("IngestionService not configured.");
+
+            await _ingestionService.IngestAsync(filePath, progress, cancellationToken);
         }
 
         /// <summary>
@@ -38,12 +54,22 @@ namespace FinAnalyzer.Engine.Services
         public async IAsyncEnumerable<string> QueryAsync(string question)
         {
             // Step 1: Retrieval (Hybrid/Vector Search). Execute search.
-            // Fetch top 25 candidates to provide sufficient data for reranker.
-            var searchResults = await _vectorDb.SearchAsync(CollectionName, question, limit: 25);
+            // Reduced limit from 25 to 10 to prevent HTTP 413 (Payload Too Large) in Reranker
+            var searchResults = await _vectorDb.SearchAsync(CollectionName, question, limit: 10);
 
             // Step 2: Reranking (Precision Filtering). Apply precision filtering.
             // Sort candidates by semantic relevance. Retain top 5.
-            var topResults = await _reranker.RerankAsync(question, searchResults, topN: 5);
+            IEnumerable<FinAnalyzer.Core.Models.SearchResult> topResults;
+            try 
+            {
+                topResults = await _reranker.RerankAsync(question, searchResults, topN: 5);
+            }
+            catch (Exception ex)
+            {
+                 // Graceful degradation: If reranker fails (e.g., 413 or timeout), use raw vector results
+                 // Log error if possible, but for now just fallback
+                 topResults = searchResults.Take(5);
+            }
 
 
             // Step 3: Context Construction. Build context.
@@ -51,8 +77,9 @@ namespace FinAnalyzer.Engine.Services
             var contextBuilder = new StringBuilder();
             
             // Apply token budget and window safety using character approximation (~4 chars per token)
-            // Reserve 4k for context and 4k for prompt+response (Llama 3 8k context).
-            const int MaxChars = 12000; 
+            // Reduced to 6000 chars (~1500 tokens) to better support CPU-only Ollama inference 
+            // and prevent HTTP timeouts during Prompt Processing.
+            const int MaxChars = 6000; 
             int currentLength = 0;
 
             foreach (var item in topResults)

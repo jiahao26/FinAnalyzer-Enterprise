@@ -7,6 +7,7 @@ using FinAnalyzer.Core.Models;
 using FinAnalyzer.Core.Configuration;
 using Qdrant.Client;
 using Qdrant.Client.Grpc;
+using Microsoft.Extensions.Options;
 
 namespace FinAnalyzer.Engine.Services
 {
@@ -17,25 +18,27 @@ namespace FinAnalyzer.Engine.Services
     public class QdrantVectorService : IVectorDbService
     {
         private readonly QdrantClient _client;
-        
-        // Parameters injected via Constructor
         private readonly int _vectorSize;
         private readonly IEmbeddingService _embeddingService;
 
-        public QdrantVectorService(IEmbeddingService embeddingService, Microsoft.Extensions.Options.IOptions<QdrantSettings> options, QdrantClient client = null)
+        public QdrantVectorService(IEmbeddingService embeddingService, IOptions<QdrantSettings> options, QdrantClient? client = null)
         {
-            var settings = options.Value;
-            _client = client ?? new QdrantClient(settings.Host, settings.Port);
-            _vectorSize = settings.VectorSize;
-            _embeddingService = embeddingService;
+            _embeddingService = embeddingService ?? throw new ArgumentNullException(nameof(embeddingService));
+            
+            var settings = options?.Value ?? new QdrantSettings();
+            
+            // Apply defensive defaults for any missing/invalid values
+            var host = !string.IsNullOrWhiteSpace(settings.Host) ? settings.Host : "localhost";
+            var port = settings.Port > 0 ? settings.Port : 6334;
+            _vectorSize = settings.VectorSize > 0 ? settings.VectorSize : 768;
+            
+            _client = client ?? new QdrantClient(host, port);
         }
 
         /// <summary>
         /// Upsert batch of document chunks into specific collection.
         /// Create collection if non-existent.
         /// </summary>
-        /// <param name="collectionName">Target Qdrant collection.</param>
-        /// <param name="chunks">List of chunks to insert.</param>
         public async Task UpsertAsync(string collectionName, IEnumerable<DocumentChunk> chunks)
         {
             var collections = await _client.ListCollectionsAsync();
@@ -47,15 +50,9 @@ namespace FinAnalyzer.Engine.Services
             var points = new List<PointStruct>();
             foreach (var chunk in chunks)
             {
-                // Validate chunks have embeddings before saving.
                 if (chunk.Vector.IsEmpty)
                 {
                     throw new ArgumentException($"Chunk {chunk.Id} has no embedding vector.");
-                }
-                
-                if (chunk.Vector.Length != _vectorSize)
-                {
-                     if (chunk.Vector.IsEmpty) throw new ArgumentException($"Chunk {chunk.Id} has no embedding vector.");
                 }
 
                 var point = new PointStruct
@@ -69,8 +66,6 @@ namespace FinAnalyzer.Engine.Services
                     }
                 };
                 
-                // Store metadata in payload to allow filtering search results later
-                // (e.g., "only show results from 2024").
                 foreach(var kvp in chunk.Metadata)
                 {
                    point.Payload[kvp.Key] = new Qdrant.Client.Grpc.Value { StringValue = kvp.Value.ToString() };
@@ -88,10 +83,6 @@ namespace FinAnalyzer.Engine.Services
         /// <summary>
         /// Perform semantic search using cosine similarity.
         /// </summary>
-        /// <param name="collectionName">Collection to search.</param>
-        /// <param name="query">User's natural language query.</param>
-        /// <param name="limit">Max number of results to return.</param>
-        /// <returns>A list of search results sorted by relevance score.</returns>
         public async Task<IEnumerable<SearchResult>> SearchAsync(string collectionName, string query, int limit = 10)
         {
             var queryVector = await _embeddingService.GenerateEmbeddingAsync(query);
@@ -123,6 +114,19 @@ namespace FinAnalyzer.Engine.Services
             }
 
             return searchResults;
+        }
+
+
+        /// <summary>
+        /// Delete an entire collection.
+        /// </summary>
+        public async Task DeleteCollectionAsync(string collectionName)
+        {
+            var collections = await _client.ListCollectionsAsync();
+            if (collections.Contains(collectionName))
+            {
+                await _client.DeleteCollectionAsync(collectionName);
+            }
         }
     }
 }
