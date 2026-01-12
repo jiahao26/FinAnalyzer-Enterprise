@@ -1,6 +1,9 @@
 # ⚙️ Configuration Guide
 
-FinAnalyzer Enterprise uses a centralized configuration system (`FinAnalyzer.Engine/appsettings.json`) to manage connections to local AI services. This design allows you to change models, endpoints, or vector parameters **without recompiling** the application.
+FinAnalyzer Enterprise uses a **centralized, single-source configuration** (`FinAnalyzer.Engine/appsettings.json`) to manage connections to local AI services. The UI project links to this file, ensuring there is only one configuration to maintain. This design allows you to change models, endpoints, or vector parameters **without recompiling** the application.
+
+> [!IMPORTANT]
+> There is only ONE `appsettings.json` file in the entire solution, located at `FinAnalyzer.Engine/appsettings.json`. The UI project references it via a linked file.
 
 ## 1. appsettings.json Structure
 
@@ -17,7 +20,7 @@ The configuration file is divided into sections for each major service.
   "AIServices": {
     "BackendType": "Ollama",
     "ChatEndpoint": "http://localhost:11434",
-    "ChatModelId": "llama3",
+    "ChatModelId": "llama3:8b-instruct-q8_0",
     "EmbeddingEndpoint": "http://localhost:11434",
     "EmbeddingModelId": "nomic-embed-text",
     "ApiKey": ""
@@ -41,20 +44,24 @@ The configuration file is divided into sections for each major service.
 
 ### 🤖 AI Services (LLM & Embeddings)
 
-| Key                 | Default                  | Description                                                                                        |
-| :------------------ | :----------------------- | :------------------------------------------------------------------------------------------------- |
-| `BackendType`       | `Ollama`                 | Only `Ollama` and `OpenAI_Compatible` are supported.                                               |
-| `ChatEndpoint`      | `http://localhost:11434` | The API endpoint for chat completions.                                                             |
-| `ChatModelId`       | `llama3`                 | The model ID for chat (e.g., `llama3`, `gpt-4o`).                                                  |
-| `EmbeddingEndpoint` | `http://localhost:11434` | The API endpoint for embeddings (can be different from Chat).                                      |
-| `EmbeddingModelId`  | `nomic-embed-text`       | The specific model tag to use for generating embeddings.                                           |
-| `ApiKey`            | `null`                   | Optional API Key if using a secured OpenAI-compatible endpoint (e.g., LM Studio, vLLM, or OpenAI). |
+| Key                 | Default                   | Description                                                                                        |
+| :------------------ | :------------------------ | :------------------------------------------------------------------------------------------------- |
+| `BackendType`       | `Ollama`                  | Only `Ollama` and `OpenAI_Compatible` are supported.                                               |
+| `ChatEndpoint`      | `http://localhost:11434`  | The API endpoint for chat completions.                                                             |
+| `ChatModelId`       | `llama3:8b-instruct-q8_0` | The model ID for chat. **Must match installed Ollama model** (use `ollama list` to check).         |
+| `EmbeddingEndpoint` | `http://localhost:11434`  | The API endpoint for embeddings (can be different from Chat).                                      |
+| `EmbeddingModelId`  | `nomic-embed-text`        | The specific model tag. **Supports up to 8192 tokens context.**                                    |
+| `ApiKey`            | `null`                    | Optional API Key if using a secured OpenAI-compatible endpoint (e.g., LM Studio, vLLM, or OpenAI). |
 
 ### 🔁 TEI (Reranker)
 
 | Key       | Default                 | Description                                                          |
 | :-------- | :---------------------- | :------------------------------------------------------------------- |
 | `BaseUrl` | `http://localhost:8080` | Endpoint for the Text Embeddings Inference (TEI) reranker container. |
+
+> [!NOTE]
+> The Reranker model is configured in `docker-compose.yml`, **not** `appsettings.json`.
+> Current Model: `cross-encoder/ms-marco-MiniLM-L-6-v2` (Lightweight, CPU-optimized).
 
 ## 3. How to Change Configuration
 

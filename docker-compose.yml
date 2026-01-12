@@ -13,13 +13,16 @@ services:
     container_name: ollama
     ports:
       - "11434:11434"
+    environment:
+      - OLLAMA_NUM_CTX=4096
+      - OLLAMA_KEEP_ALIVE=5m
     volumes:
       - ollama_data:/root/.ollama
 
   reranker:
     image: ghcr.io/huggingface/text-embeddings-inference:cpu-1.8
     container_name: reranker
-    command: --model-id BAAI/bge-reranker-v2-m3
+    command: --model-id cross-encoder/ms-marco-MiniLM-L-6-v2
     ports:
       - "8080:80"
     volumes:

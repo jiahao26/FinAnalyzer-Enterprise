@@ -16,7 +16,10 @@ namespace FinAnalyzer.Engine.Services
         // Define recursive separators: Paragraphs -> Lines -> Sentences -> Words
         private readonly string[] _separators = new[] { "\r\n\r\n", "\n\n", "\r\n", "\n", " " };
 
-        public TextChunker(int windowSize = 500, int overlap = 100)
+        // Default window size reduced to 300 to account for Tokenizer Mismatch (GPT-4 vs BERT)
+        // Reranker limit is 512. GPT-4 500 tokens != BERT 500 tokens. 
+        // 300 is a safe upper bound.
+        public TextChunker(int windowSize = 300, int overlap = 50)
         {
             _windowSize = windowSize;
             _overlap = overlap;
@@ -81,8 +84,8 @@ namespace FinAnalyzer.Engine.Services
         private int CountTokens(string text)
         {
             if (string.IsNullOrEmpty(text)) return 0;
-            // Use tokenizer if available; otherwise approximate 4 chars per token
-            return _tokenizer?.CountTokens(text) ?? (text.Length / 4);
+            // Use tokenizer if available; otherwise approximate 3 chars per token (conservative)
+            return _tokenizer?.CountTokens(text) ?? (text.Length / 3);
         }
 
         private void SplitTextRecursive(string text, string[] separators, List<string> chunks)

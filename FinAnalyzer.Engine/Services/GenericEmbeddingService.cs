@@ -20,17 +20,20 @@ namespace FinAnalyzer.Engine.Services
 
         public GenericEmbeddingService(HttpClient httpClient, IOptions<AISettings> options)
         {
-            _httpClient = httpClient;
-            var settings = options.Value;
-            _baseUrl = settings.EmbeddingEndpoint;
-            _modelName = settings.EmbeddingModelId;
+            _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+            
+            var settings = options?.Value ?? new AISettings();
+            _baseUrl = !string.IsNullOrWhiteSpace(settings.EmbeddingEndpoint) 
+                ? settings.EmbeddingEndpoint 
+                : "http://localhost:11434";
+            _modelName = !string.IsNullOrWhiteSpace(settings.EmbeddingModelId)
+                ? settings.EmbeddingModelId
+                : "nomic-embed-text";
         }
 
         /// <summary>
         /// Generate vector embedding for input text.
         /// </summary>
-        /// <param name="text">Input text to embed.</param>
-        /// <returns>A read-only memory block containing the floating-point vector.</returns>
         public async Task<ReadOnlyMemory<float>> GenerateEmbeddingAsync(string text)
         {
             var payload = new
@@ -42,9 +45,6 @@ namespace FinAnalyzer.Engine.Services
             var jsonPayload = JsonSerializer.Serialize(payload);
             var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
-            // Assume Ollama API structure for embeddings. 
-            // Future update: adjust logic if OpenAI compatible endpoint is needed.
-            // Requirement: "EmbeddingEndpoint: Base URL for embeddings (usually Ollama)."
             var response = await _httpClient.PostAsync($"{_baseUrl}/api/embeddings", content);
             response.EnsureSuccessStatusCode();
 
@@ -64,8 +64,6 @@ namespace FinAnalyzer.Engine.Services
         /// </summary>
         public async Task WarmUpAsync()
         {
-            // Send dummy request ("warmup") to force Ollama to load model into RAM.
-            // Prevent latency on first user query.
             try 
             {
                 await GenerateEmbeddingAsync("warmup");
