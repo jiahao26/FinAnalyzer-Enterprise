@@ -1,6 +1,6 @@
 # Secure Enterprise RAG Workstation (FinAnalyzer)
 
-![License](https://img.shields.io/badge/license-MIT-blue) ![.NET](https://img.shields.io/badge/.NET-10.0-purple) ![Architecture](https://img.shields.io/badge/Architecture-Clean-green) ![Status](https://img.shields.io/badge/Status-Phase%203%20Complete-green)
+![License](https://img.shields.io/badge/license-MIT-blue) ![.NET](https://img.shields.io/badge/.NET-10.0-purple) ![Architecture](https://img.shields.io/badge/Architecture-Clean-green) ![Status](https://img.shields.io/badge/Status-Phase%204%20Complete-green)
 
 **FinAnalyzer Enterprise** is a secure, test-driven RAG workstation that solves real business intelligence problems without compromising data sovereignty. Built for financial compliance teams with professional software testing standards, it automates analysis of sensitive 10-K reports using on-premise vector retrieval and air-gapped LLMs—ensuring zero data egress while maintaining enterprise-grade reliability through comprehensive unit and integration testing.
 
@@ -11,10 +11,23 @@
 | **Phase 1** | **Infrastructure & "Hello World"** (Docker, Scaffold, Tests) | ✅ **Complete**    |
 | **Phase 2** | **The Data Pipeline** (PDF Parsing, Chunking, Vectors)       | ✅ **Complete**    |
 | **Phase 3** | **The RAG Core** (Retrieval, Reranking, Orchestration)       | ✅ **Complete**    |
-| **Phase 4** | **The UI Foundation** (WPF Shell, MVVM, Settings)            | 🔄 **In Progress** |
-| **Phase 5** | **Integration & Threading** (Async loading, Live Chat)       | ⬜ Pending         |
+| **Phase 4** | **The UI Foundation** (WPF Shell, MVVM, Settings)            | ✅ **Complete**    |
+| **Phase 5** | **Integration & Threading** (Async loading, Live Chat)       | 🔄 **In Progress** |
 | **Phase 6** | **Advanced Features** (Citations, Chat History)              | ⬜ Pending         |
 | **Phase 7** | **Enterprise Hardening** (Logging, Release Packaging)        | ⬜ Pending         |
+
+## 🚀 Quick Start
+
+```bash
+# 1. Start Docker services
+docker compose up -d
+
+# 2. Build the application
+dotnet build
+
+# 3. Run the application
+dotnet run --project FinAnalyzer.UI/FinAnalyzer.UI.csproj
+```
 
 ## 📚 Documentation
 
@@ -72,6 +85,15 @@ The solution follows a strict Clean Architecture pattern, divided into four core
 | **FinAnalyzer.Engine** | **Logic & Services** (Application Layer) | `Microsoft.SemanticKernel`, `Qdrant.Client`, `PdfPig`, `Microsoft.ML.Tokenizers` |
 | **FinAnalyzer.UI**     | **Presentation** (Presentation Layer)    | `CommunityToolkit.Mvvm`, `Microsoft.Extensions.Hosting`                          |
 | **FinAnalyzer.Test**   | **Verification** (Testing Layer)         | `xUnit`, `NSubstitute`, `FluentAssertions`                                       |
+
+## 🖥️ Screenshots
+
+The application features a modern dark theme designed for extended analyst workflows:
+
+- **Dashboard**: System health monitoring and pipeline status
+- **Documents**: PDF repository with upload and status tracking
+- **Chat**: RAG-powered analysis with document context selection
+- **Settings**: Docker service configuration and health checks
 
 ## 📄 License
 

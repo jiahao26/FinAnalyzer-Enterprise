@@ -48,6 +48,56 @@ ollama_data/
 *.bin
 *.onnx
 
+# Visual Studio & Build artifacts
+.vs/
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+bld/
+
+# User specific settings
+*.user
+*.suo
+*.userprefs
+
+# VS Code
+.vscode/
+
+# OS specific checks
+Thumbs.db
+Desktop.ini
+
+# .NET & NuGet
+project.lock.json
+*.nupkg
+packages/
+!packages/build/
+
+# ASP.NET Core environments & Secrets
+**/appsettings.Development.json
+**/appsettings.Production.json
+**/appsettings.Local.json
+.env
+
+# Logs
+*.log
+msbuild.log
+
+# Test Results
+TestResults/
+**/TestResults/
+
+# Docker & AI Data
+# Exclude local vector DB storage and model weights
+qdrant_storage/
+ollama_data/
+*.gguf
+*.bin
+*.onnx
+
 # Docker Compose helper files
 docker-compose.override.yml
 
@@ -56,4 +106,3 @@ build/
 # Agent & Gemini
 .agent/
 .gemini/
-
