@@ -114,6 +114,8 @@ public sealed partial class ChatViewModel : ViewModelBase
         InputText = string.Empty;
         IsProcessing = true;
 
+        FinAnalyzer.Engine.CentralLogger.Step("UI QUERY START", question);
+
         try
         {
             if (_ragService != null)
@@ -131,9 +133,13 @@ public sealed partial class ChatViewModel : ViewModelBase
                     responseBuilder.Append(chunk);
                     aiMessage.Content = responseBuilder.ToString();
                 }
+                
+                FinAnalyzer.Engine.CentralLogger.Step("UI QUERY SUCCESS", $"Generated {aiMessage.Content.Length} characters");
             }
             else
             {
+                FinAnalyzer.Engine.CentralLogger.Warn("RAG Service is null in ChatViewModel");
+                // ... (rest of code)
                 // Demo response when no service
                 var aiMessage = new ChatMessage
                 {
@@ -158,6 +164,8 @@ public sealed partial class ChatViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
+            FinAnalyzer.Engine.CentralLogger.Error($"UI Query Error: {ex.Message}", ex);
+            
             // If we have an existing AI message (partial stream or empty), update it with error
             // to avoid leaving a blank bubble in the chat.
             var lastMessage = Messages.LastOrDefault();

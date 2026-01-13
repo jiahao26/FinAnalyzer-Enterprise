@@ -12,9 +12,13 @@ namespace FinAnalyzer.Engine.Services
     {
         public async IAsyncEnumerable<PageContent> LoadAsync(string filePath)
         {
+            CentralLogger.Info($"Loading PDF: {filePath}");
+            
             // Stream pages one by one to avoid loading entire document into memory.
             // Open file and iterate (cold loading).
             using var document = PdfDocument.Open(filePath);
+            
+            CentralLogger.Info($"PDF opened successfully - {document.NumberOfPages} pages");
             
             foreach (var page in document.GetPages())
             {
@@ -30,13 +34,20 @@ namespace FinAnalyzer.Engine.Services
 
                 if (!string.IsNullOrWhiteSpace(text))
                 {
+                    CentralLogger.Debug($"Page {page.Number}: extracted {text.Length} chars");
                     yield return new PageContent
                     {
                         Text = text,
                         PageNumber = page.Number
                     };
                 }
+                else
+                {
+                    CentralLogger.Warn($"Page {page.Number}: no text content extracted");
+                }
             }
+            
+            CentralLogger.Info($"PDF loading complete: {filePath}");
         }
     }
 }

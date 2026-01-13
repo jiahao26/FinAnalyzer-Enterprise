@@ -30,6 +30,8 @@ namespace FinAnalyzer.Engine.Services
             _chunker = chunker ?? throw new ArgumentNullException(nameof(chunker));
             _embeddingService = embeddingService ?? throw new ArgumentNullException(nameof(embeddingService));
             _vectorDbService = vectorDbService ?? throw new ArgumentNullException(nameof(vectorDbService));
+            
+            CentralLogger.Info("IngestionService initialized");
         }
 
         /// <summary>
@@ -46,12 +48,16 @@ namespace FinAnalyzer.Engine.Services
             if (string.IsNullOrWhiteSpace(filePath))
                 throw new ArgumentException("File path cannot be empty.", nameof(filePath));
 
+            CentralLogger.Step("INGESTION START", $"File: {filePath}");
+            var startTime = DateTime.Now;
+
             var fileName = System.IO.Path.GetFileName(filePath);
             var allChunks = new List<DocumentChunk>();
 
             progress?.Report(5);
 
             // Phase 1: Load PDF pages (0-20%)
+            CentralLogger.Step("Phase 1: PDF Loading", fileName);
             var pages = new List<PageContent>();
             await foreach (var page in _fileLoader.LoadAsync(filePath))
             {
@@ -60,11 +66,16 @@ namespace FinAnalyzer.Engine.Services
             }
 
             if (pages.Count == 0)
+            {
+                CentralLogger.Error("No text content extracted from PDF");
                 throw new InvalidOperationException("No text content extracted from PDF.");
+            }
 
+            CentralLogger.Info($"Loaded {pages.Count} pages from PDF");
             progress?.Report(20);
 
             // Phase 2: Chunk pages (20-40%)
+            CentralLogger.Step("Phase 2: Text Chunking", $"{pages.Count} pages");
             int processedPages = 0;
             foreach (var page in pages)
             {
@@ -79,11 +90,16 @@ namespace FinAnalyzer.Engine.Services
             }
 
             if (allChunks.Count == 0)
+            {
+                CentralLogger.Error("No chunks generated from document");
                 throw new InvalidOperationException("No chunks generated from document.");
+            }
 
+            CentralLogger.Info($"Generated {allChunks.Count} chunks from {pages.Count} pages");
             progress?.Report(40);
 
             // Phase 3: Generate embeddings (40-80%)
+            CentralLogger.Step("Phase 3: Embedding Generation", $"{allChunks.Count} chunks");
             int processedChunks = 0;
             foreach (var chunk in allChunks)
             {
@@ -95,13 +111,22 @@ namespace FinAnalyzer.Engine.Services
                 processedChunks++;
                 int embedProgress = 40 + (int)(40.0 * processedChunks / allChunks.Count);
                 progress?.Report(embedProgress);
+                
+                if (processedChunks % 10 == 0)
+                {
+                    CentralLogger.Debug($"Embedded {processedChunks}/{allChunks.Count} chunks");
+                }
             }
 
+            CentralLogger.Info($"Generated embeddings for all {allChunks.Count} chunks");
             progress?.Report(80);
 
             // Phase 4: Store in Qdrant (80-100%)
+            CentralLogger.Step("Phase 4: Vector Storage", $"Storing {allChunks.Count} chunks to '{CollectionName}'");
             await _vectorDbService.UpsertAsync(CollectionName, allChunks);
 
+            var elapsed = DateTime.Now - startTime;
+            CentralLogger.Step("INGESTION COMPLETE", $"Processed {allChunks.Count} chunks in {elapsed.TotalSeconds:F1}s");
             progress?.Report(100);
         }
     }

@@ -131,6 +131,7 @@ public sealed partial class DocumentsViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
+            FinAnalyzer.Engine.CentralLogger.Error($"Ingestion Error for {fileName}: {ex.Message}", ex);
             newDocument.Status = DocumentStatus.Error;
             System.Diagnostics.Debug.WriteLine($"Ingestion failed: {ex.Message}");
         }

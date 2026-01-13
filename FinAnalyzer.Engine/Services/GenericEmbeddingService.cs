@@ -29,6 +29,8 @@ namespace FinAnalyzer.Engine.Services
             _modelName = !string.IsNullOrWhiteSpace(settings.EmbeddingModelId)
                 ? settings.EmbeddingModelId
                 : "nomic-embed-text";
+            
+            CentralLogger.Info($"GenericEmbeddingService initialized - BaseUrl: '{_baseUrl}', Model: '{_modelName}'");
         }
 
         /// <summary>
@@ -45,18 +47,30 @@ namespace FinAnalyzer.Engine.Services
             var jsonPayload = JsonSerializer.Serialize(payload);
             var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
-            var response = await _httpClient.PostAsync($"{_baseUrl}/api/embeddings", content);
-            response.EnsureSuccessStatusCode();
-
-            var responseString = await response.Content.ReadAsStringAsync();
-            var result = JsonSerializer.Deserialize<OllamaEmbeddingResponse>(responseString);
+            CentralLogger.Debug($"Requesting embedding for text ({text.Length} chars) from {_baseUrl}/api/embeddings");
             
-            if (result?.embedding == null)
+            try
             {
-                 throw new InvalidOperationException("Failed to generate embedding: null response.");
-            }
+                var response = await _httpClient.PostAsync($"{_baseUrl}/api/embeddings", content);
+                response.EnsureSuccessStatusCode();
 
-            return new ReadOnlyMemory<float>(result.embedding);
+                var responseString = await response.Content.ReadAsStringAsync();
+                var result = JsonSerializer.Deserialize<OllamaEmbeddingResponse>(responseString);
+                
+                if (result?.embedding == null)
+                {
+                    CentralLogger.Error("Failed to generate embedding: null response from Ollama");
+                    throw new InvalidOperationException("Failed to generate embedding: null response.");
+                }
+
+                CentralLogger.Debug($"Received embedding with {result.embedding.Length} dimensions");
+                return new ReadOnlyMemory<float>(result.embedding);
+            }
+            catch (HttpRequestException ex)
+            {
+                CentralLogger.Error($"HTTP error requesting embedding from {_baseUrl}", ex);
+                throw;
+            }
         }
 
         /// <summary>
@@ -64,13 +78,15 @@ namespace FinAnalyzer.Engine.Services
         /// </summary>
         public async Task WarmUpAsync()
         {
+            CentralLogger.Info("Warming up embedding model...");
             try 
             {
                 await GenerateEmbeddingAsync("warmup");
+                CentralLogger.Info("Embedding model warm-up complete");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[Warning] Embedding Service WarmUp failed: {ex.Message}");
+                CentralLogger.Warn($"Embedding Service WarmUp failed: {ex.Message}");
             }
         }
 
