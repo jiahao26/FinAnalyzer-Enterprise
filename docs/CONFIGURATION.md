@@ -20,7 +20,7 @@ The configuration file is divided into sections for each major service.
   "AIServices": {
     "BackendType": "Ollama",
     "ChatEndpoint": "http://localhost:11434",
-    "ChatModelId": "llama3:8b-instruct-q8_0",
+    "ChatModelId": "llama3:8b-instruct-q4_K_M",
     "EmbeddingEndpoint": "http://localhost:11434",
     "EmbeddingModelId": "nomic-embed-text",
     "ApiKey": ""
@@ -44,14 +44,14 @@ The configuration file is divided into sections for each major service.
 
 ### 🤖 AI Services (LLM & Embeddings)
 
-| Key                 | Default                   | Description                                                                                        |
-| :------------------ | :------------------------ | :------------------------------------------------------------------------------------------------- |
-| `BackendType`       | `Ollama`                  | Only `Ollama` and `OpenAI_Compatible` are supported.                                               |
-| `ChatEndpoint`      | `http://localhost:11434`  | The API endpoint for chat completions.                                                             |
-| `ChatModelId`       | `llama3:8b-instruct-q8_0` | The model ID for chat. **Must match installed Ollama model** (use `ollama list` to check).         |
-| `EmbeddingEndpoint` | `http://localhost:11434`  | The API endpoint for embeddings (can be different from Chat).                                      |
-| `EmbeddingModelId`  | `nomic-embed-text`        | The specific model tag. **Supports up to 8192 tokens context.**                                    |
-| `ApiKey`            | `null`                    | Optional API Key if using a secured OpenAI-compatible endpoint (e.g., LM Studio, vLLM, or OpenAI). |
+| Key                 | Default                     | Description                                                                                        |
+| :------------------ | :-------------------------- | :------------------------------------------------------------------------------------------------- |
+| `BackendType`       | `Ollama`                    | Only `Ollama` and `OpenAI_Compatible` are supported.                                               |
+| `ChatEndpoint`      | `http://localhost:11434`    | The API endpoint for chat (Local Host).                                                            |
+| `ChatModelId`       | `llama3:8b-instruct-q4_K_M` | The model ID for chat. **Must match installed Ollama model** (use `ollama list` to check).         |
+| `EmbeddingEndpoint` | `http://localhost:11434`    | The API endpoint for embeddings (can be different from Chat).                                      |
+| `EmbeddingModelId`  | `nomic-embed-text`          | The specific model tag. **Supports up to 8192 tokens context.**                                    |
+| `ApiKey`            | `null`                      | Optional API Key if using a secured OpenAI-compatible endpoint (e.g., LM Studio, vLLM, or OpenAI). |
 
 ### 🔁 TEI (Reranker)
 

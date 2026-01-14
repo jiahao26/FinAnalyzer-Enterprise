@@ -1,3 +1,6 @@
+# Ollama is now running locally on the host machine (not in Docker)
+# to resolve HTTP 500 errors caused by containerized Ollama issues.
+
 services:
   qdrant:
     image: qdrant/qdrant
@@ -7,17 +10,6 @@ services:
       - "6334:6334"
     volumes:
       - qdrant_data:/qdrant/storage
-
-  ollama:
-    image: ollama/ollama
-    container_name: ollama
-    ports:
-      - "11434:11434"
-    environment:
-      - OLLAMA_NUM_CTX=4096
-      - OLLAMA_KEEP_ALIVE=24h
-    volumes:
-      - ollama_data:/root/.ollama
 
   reranker:
     image: ghcr.io/huggingface/text-embeddings-inference:cpu-1.8
@@ -29,8 +21,6 @@ services:
       - reranker_data:/data
 
 volumes:
-  ollama_data:
-    name: ollama_data
   qdrant_data:
     name: qdrant_data
   reranker_data:

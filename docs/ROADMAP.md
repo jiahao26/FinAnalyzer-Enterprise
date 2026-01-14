@@ -17,9 +17,9 @@ tags: [plan, project-management, dotnet, ai, rag]
 
 - [x] **Docker Compose**: Create `docker-compose.yml` with service definitions.
 - [x] **Qdrant Container**: Configure vector database on port 6333/6334.
-- [x] **Ollama Container**: Configure LLM backend with GPU passthrough.
+- [x] **Ollama (Local)**: Configure LLM backend on local machine (Port 11434).
 - [x] **TEI Container**: Configure Text Embeddings Inference for reranking.
-- [x] **Volume Mounts**: Persist Qdrant data and Ollama models.
+- [x] **Volume Mounts**: Persist Qdrant data and local Ollama models.
 
 ### 1.2 Solution Scaffold
 
@@ -132,7 +132,7 @@ tags: [plan, project-management, dotnet, ai, rag]
 
 ---
 
-## **Phase 4: The UI Foundation (The Face)**
+## **Phase 4: The UI Foundation (The Face)** 🔄 **In Progress**
 
 **Focus:** Structure, MVVM scaffolding, and visual design.
 
@@ -203,7 +203,7 @@ tags: [plan, project-management, dotnet, ai, rag]
 
 ---
 
-## **Phase 5: Integration & Threading**
+## **Phase 5: Integration & Threading** 🔄 **In Progress**
 
 **Focus:** Connecting the Brain to the Face without freezing.
 

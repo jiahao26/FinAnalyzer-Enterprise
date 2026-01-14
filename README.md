@@ -1,6 +1,6 @@
 # Secure Enterprise RAG Workstation (FinAnalyzer)
 
-![License](https://img.shields.io/badge/license-MIT-blue) ![.NET](https://img.shields.io/badge/.NET-10.0-purple) ![Architecture](https://img.shields.io/badge/Architecture-Clean-green) ![Status](https://img.shields.io/badge/Status-Phase%204%20Complete-green)
+![License](https://img.shields.io/badge/license-MIT-blue) ![.NET](https://img.shields.io/badge/.NET-10.0-purple) ![Architecture](https://img.shields.io/badge/Architecture-Clean-green) ![Status](https://img.shields.io/badge/Status-Phase%205%20In%20Progress-blue)
 
 **FinAnalyzer Enterprise** is a secure, test-driven RAG workstation that solves real business intelligence problems without compromising data sovereignty. Built for financial compliance teams with professional software testing standards, it automates analysis of sensitive 10-K reports using on-premise vector retrieval and air-gapped LLMs—ensuring zero data egress while maintaining enterprise-grade reliability through comprehensive unit and integration testing.
 
@@ -11,7 +11,7 @@
 | **Phase 1** | **Infrastructure & "Hello World"** (Docker, Scaffold, Tests) | ✅ **Complete**    |
 | **Phase 2** | **The Data Pipeline** (PDF Parsing, Chunking, Vectors)       | ✅ **Complete**    |
 | **Phase 3** | **The RAG Core** (Retrieval, Reranking, Orchestration)       | ✅ **Complete**    |
-| **Phase 4** | **The UI Foundation** (WPF Shell, MVVM, Settings)            | ✅ **Complete**    |
+| **Phase 4** | **The UI Foundation** (WPF Shell, MVVM, Settings)            | 🔄 **In Progress** |
 | **Phase 5** | **Integration & Threading** (Async loading, Live Chat)       | 🔄 **In Progress** |
 | **Phase 6** | **Advanced Features** (Citations, Chat History)              | ⬜ Pending         |
 | **Phase 7** | **Enterprise Hardening** (Logging, Release Packaging)        | ⬜ Pending         |
@@ -64,16 +64,16 @@ _Read more in [PHILOSOPHY.md](docs/PHILOSOPHY.md)._
 
 ## 🛠️ Technology Stack
 
-| Component        | Technology                    | Descriptions                        |
-| :--------------- | :---------------------------- | :---------------------------------- |
-| **UI Framework** | **WPF (.NET 10)**             | Modern Desktop (Material Design)    |
-| **Orchestrator** | **Microsoft Semantic Kernel** | AI Agent Orchestration              |
-| **Vector DB**    | **Qdrant**                    | Local Docker Container              |
-| **LLM Backend**  | **Hybrid (Ollama / OpenAI)**  | Configurable (Llama-3, GPT-4, vLLM) |
-| **Reranker**     | **bge-reranker-v2-m3**        | Text Embeddings Inference (Docker)  |
-| **Embeddings**   | **Hybrid (Ollama / OpenAI)**  | Configurable (Nomic / Ada-002)      |
-| **PDF Engine**   | **PdfPig**                    | Apache 2.0 License (No iText AGPL)  |
-| **Tokenizer**    | **Microsoft.ML.Tokenizers**   | GPT-4/Llama-3 Token Counting        |
+| Component        | Technology                    | Descriptions                       |
+| :--------------- | :---------------------------- | :--------------------------------- |
+| **UI Framework** | **WPF (.NET 10)**             | Modern Desktop (Material Design)   |
+| **Orchestrator** | **Microsoft Semantic Kernel** | AI Agent Orchestration             |
+| **Vector DB**    | **Qdrant**                    | Local Docker Container             |
+| **LLM Backend**  | **Hybrid (Ollama / OpenAI)**  | Configurable (Local Host / cloud)  |
+| **Reranker**     | **bge-reranker-v2-m3**        | Text Embeddings Inference (Docker) |
+| **Embeddings**   | **Hybrid (Ollama / OpenAI)**  | Configurable (Local Host / cloud)  |
+| **PDF Engine**   | **PdfPig**                    | Apache 2.0 License (No iText AGPL) |
+| **Tokenizer**    | **Microsoft.ML.Tokenizers**   | GPT-4/Llama-3 Token Counting       |
 
 ## 📂 Structure
 
